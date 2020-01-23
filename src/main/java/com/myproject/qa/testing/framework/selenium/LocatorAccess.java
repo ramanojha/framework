@@ -2,16 +2,14 @@ package com.myproject.qa.testing.framework.selenium;
 
 import java.util.List;
 
-import javax.lang.model.element.Element;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.myproject.qa.testing.framework.exceptions.LocatorNotResolvedException;
 import com.myproject.qa.testing.framework.exceptions.LocatorTypeNotResolvedException;
 
-public class LocatorAccess {
-	public static By getLocator(Object element) throws Exception {
+public class LocatorAccess extends InstanceAccess{
+	private static By getLocator(Object element) throws Exception {
 		
 		String elementName = ((Enum<?>) element).name();
 		String elementValue = element.toString();
@@ -38,10 +36,11 @@ public class LocatorAccess {
 
 	public static WebElement getElement(Object locator) throws Exception {
 		try {
-			if(locator instanceof Enum)
-				return WebDriverAccess.getDriver().findElement(getLocator(locator));
+			if(locator instanceof Enum){
+				return driver.findElement(getLocator(locator));
+			}
 			else if(locator instanceof By)
-				return WebDriverAccess.getDriver().findElement((By) locator);
+				return driver.findElement((By) locator);
 			else
 				return (WebElement) locator;
 		} catch (Exception e) {
@@ -52,9 +51,9 @@ public class LocatorAccess {
 	public static List<WebElement> getElements(Object locator) throws Exception {	
 		try {
 			if(locator instanceof Enum)
-				return WebDriverAccess.getDriver().findElements(getLocator(locator));
+				return driver.findElements(getLocator(locator));
 			if(locator instanceof By)
-				return WebDriverAccess.getDriver().findElements((By) locator);
+				return driver.findElements((By) locator);
 		} catch (Exception e) {
 			throw new LocatorNotResolvedException(e, "Locator not Found -"+((Enum<?>)locator).name());
 		}

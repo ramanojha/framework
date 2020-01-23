@@ -1,35 +1,42 @@
 package com.myproject.qa.testing.framework.selenium;
 
 import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
 import com.myproject.qa.testing.framework.test.env.TestEnvironment;
 
 
-
 public class BaseWebDriver {
 	
+	private static int waitTime;
+
 	@BeforeSuite
-	@Parameters({"env", "browser"})
-	public static void intDriver(String env, String browser){
+	@Parameters({"env", "browser", "waitTime"})
+	public static void intDriver(@Optional("qa")String env, @Optional("chrome")String browser, @Optional("5")int waitPeriod){
+		waitTime = waitPeriod;
 		TestEnvironment.setEnvConfigsTest(env);
-		InitializeWebDriver.setDriver(browser);
-		
-		 
+		InitializeWebDriver.setDriver(browser);	 
 	}
 	
 	@AfterSuite
 	public static void quitDriver(){
-		WebDriverAccess.getDriver().quit();
+		InstanceAccess.getDriver().quit();
 	}
 	
-	@BeforeTest
-	@Parameters({"thinkTime"})
-	public static void waitForStability(int thinkTime) throws Exception{
-		Thread.sleep(thinkTime*1000);
+	@BeforeMethod
+	@Parameters({"stabilityTime"})
+	public static void waitForStability(@Optional("1")int stabilityTime) throws Exception{
+		BrowserWait.waitForWaitPageToBeLoaded();
+		Thread.sleep(stabilityTime*1000);
 	}
+	
+	public static int getWaitTime() {
+		return waitTime*1000;
+	}
+
 
 	
 	

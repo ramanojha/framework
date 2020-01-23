@@ -17,8 +17,9 @@ import com.myproject.qa.testing.framework.properties.SeleniumProperties;
 public class InitializeWebDriver {
 
 	private static WebDriver driver;
-
-	public static void setDriver(String browser){
+	private static String browser;
+	public static void setDriver(String driverType){
+		browser = driverType;
 		if(driver == null){
 			switch (browser) {
 			case "chrome" :
@@ -54,6 +55,11 @@ public class InitializeWebDriver {
 	public static WebDriver getDriver(){
 		return driver;
 	}
+	
+	public static String getBrowser(){
+		return browser;
+	}
+	
 
 	private static String getdriverPath(String browser){
 		String path = null ;
@@ -71,6 +77,4 @@ public class InitializeWebDriver {
 			ScriptLogger.debug("Setup this path :"+path);
 		return null;
 	}
-
-
 }

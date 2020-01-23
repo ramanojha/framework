@@ -101,7 +101,7 @@ public class ScriptLogger {
 				MDC.put("hostName", System.getProperty("hostName").split("\\.")[0]);
 			}
 			catch (UnknownHostException e) {
-				System.out.println("Host name in Log4j is not replaced as per user system");
+				ScriptLogger.info("Host name in Log4j is not replaced as per user system");
 				e.printStackTrace();
 			}
 		}

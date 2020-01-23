@@ -16,7 +16,7 @@ public class Files {
 	        	 return false;
 	      }
 	      else{
-	    	  System.out.println("Not a directory "+path);
+	    	  ScriptLogger.info("Not a directory "+path);
 	    	  return false;
 	      }
 	}

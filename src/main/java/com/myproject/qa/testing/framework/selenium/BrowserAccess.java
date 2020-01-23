@@ -1,12 +1,72 @@
 package com.myproject.qa.testing.framework.selenium;
 
-import org.openqa.selenium.By;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.openqa.selenium.WebElement;
+public class BrowserAccess extends InstanceAccess{
+	
+	public static String getElementInnerHtml(Object locator)  throws Exception {
+		return (String)jsDriver.executeScript("return arguments[0].innerHTML;" ,LocatorAccess.getElement(locator));
+	}
+	
+	public static String getElementOuterHtml(Object locator)  throws Exception {
+		return (String)jsDriver.executeScript("return arguments[0].outerHTML;" ,LocatorAccess.getElement(locator));
+	}
+	
+	public static String getElementAttributeValue(Object locator, String attribute) throws Exception {
+		 return LocatorAccess.getElement(locator).getAttribute(attribute);
+	}
+	
+	public static String getElementText(Object locator, boolean... js)  throws Exception {
+		if(js.length > 0) {	// default is JavaScript
+			if(browser.equalsIgnoreCase("ie"))
+				return (String)jsDriver.executeScript("return arguments[0].innerText;", LocatorAccess.getElement(locator));
+			else
+				return (String)jsDriver.executeScript("return arguments[0].textContent;", LocatorAccess.getElement(locator));
+		}
+		return LocatorAccess.getElement(locator).getText();
+	}
+	
+	public static List<String> getElementsText(Object locator, boolean... js)  throws Exception {
+		return getElementsText(LocatorAccess.getElements(locator), js); 
+	}	
+	
+	public static List<String> getElementsText(List<WebElement> elements, boolean... js) throws Exception {
+		List<String> result = new ArrayList<String>();
+		for(WebElement each : elements)
+			result.add(getElementText(each, js).trim());
+		return result;
+	}
+	
+	public static String getPageTitle() throws Exception {
+		return driver.getTitle();
+	}
+	
+	public static String getWindowHandle() throws Exception {
+		return driver.getWindowHandle();
+	}
+	
+	public static Set<String> getWindowHandles() throws Exception {
+		return driver.getWindowHandles();
+	}
 
-import com.myproject.qa.testing.framework.exceptions.LocatorTypeNotResolvedException;
+	public static String removeAttribute(Object locator,String...js) throws Exception {
+		return (String)jsDriver.executeScript("arguments[0].removeAttribute('"+js[0]+"','"+js[1]+"')", LocatorAccess.getElement(locator));	
+	}
 
-public class BrowserAccess {
-
-
+	public static String setAttribute(Object locator,String...js) throws Exception {
+		return (String)jsDriver.executeScript("arguments[0].setAttribute('"+js[0]+"','"+js[1]+"')", LocatorAccess.getElement(locator));	
+	}
+	
+	public static String getPageSource() throws Exception {
+		return driver.getPageSource();
+	}
+	
+	public static String getNetworkLogEntries() throws Exception{
+		String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
+		return jsDriver.executeScript(scriptToExecute).toString();	
+	}
 
 }
