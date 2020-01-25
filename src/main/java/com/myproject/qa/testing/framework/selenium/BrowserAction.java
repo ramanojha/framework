@@ -247,11 +247,6 @@ public class BrowserAction extends InstanceAccess{
 		Thread.sleep(500); 
 	}
 
-	public static boolean verifyActiveElementTest(Object element) throws Exception{
-		return driver.switchTo().activeElement().equals(LocatorAccess.getElement(element));
-	}	
-
-
 	public static ScreenOrientation getDeviceOrientation() throws Exception {
 		WebDriver d = new Augmenter().augment(driver);
 		Rotatable rotator = ((Rotatable) d);

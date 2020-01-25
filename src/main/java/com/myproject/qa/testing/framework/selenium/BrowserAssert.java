@@ -2,6 +2,7 @@ package com.myproject.qa.testing.framework.selenium;
 
 import java.util.List;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
@@ -16,7 +17,6 @@ public class BrowserAssert extends InstanceAccess {
 			assertElementIsDisplayed(element);
 		}	
 	}
-
 	public static void assertElementIsDisplayed(Object element) throws Exception{
 		assertTrue(LocatorAccess.getElement(element).isDisplayed(), "Element is not displayed");
 	}
@@ -88,5 +88,29 @@ public class BrowserAssert extends InstanceAccess {
 			count++;
 		}
 		return count;
+	}
+
+	public static void assertTextsNAcceptInAlert(String... alertTexts) throws Exception {
+
+		Alert alert=BrowserAction.switchToAlertBox();
+		for(String text : alertTexts){
+			BrowserAssert.assertTrue(alert.getText().contains(text), "Application exception: Invalid alert message text"+text);	
+		}
+		alert.accept();
+		BrowserAction.switchToDefaultContent();
+	}
+
+	public static void assertTextsNDismissInAlert(String... alertTexts) throws Exception {
+
+		Alert alert=BrowserAction.switchToAlertBox();
+		for(String text : alertTexts){
+			BrowserAssert.assertTrue(alert.getText().contains(text), "Application exception: Invalid alert message text"+text);	
+		}
+		alert.dismiss();
+		BrowserAction.switchToDefaultContent();
+	}
+
+	public static boolean assertActiveElementTest(Object element) throws Exception{
+		return driver.switchTo().activeElement().equals(LocatorAccess.getElement(element));
 	}
 }

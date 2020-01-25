@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 public class BrowserAccess extends InstanceAccess{
 	
@@ -69,4 +70,24 @@ public class BrowserAccess extends InstanceAccess{
 		return jsDriver.executeScript(scriptToExecute).toString();	
 	}
 
+	public static String getCssValue(WebElement object, String cssAttribute) throws Exception {
+		return LocatorAccess.getElement(object).getCssValue(cssAttribute);
+	}
+	
+	//Get All url Links
+	public static List<String> getAllPageLinks() throws Exception{
+		List<WebElement> links= new ArrayList<>();
+		List<String> finalList= new ArrayList<>();
+		links.addAll(LocatorAccess.getElements(By.tagName("a")));
+		links.addAll(LocatorAccess.getElements(By.tagName("img")));
+		links.forEach(link ->{
+			if(link.getAttribute("href") !=null) {
+				finalList.add(link.getAttribute("href"));
+			}
+			else if(link.getAttribute("src") !=null && link.getAttribute("src").contains("http")) {
+				finalList.add(link.getAttribute("src"));
+			}
+		});	
+		return finalList;	
+	}
 }

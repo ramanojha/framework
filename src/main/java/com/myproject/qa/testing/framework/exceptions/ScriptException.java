@@ -16,4 +16,10 @@ public class ScriptException extends Exception{
 		super("Automated Script Exception-Please check error log");
 		ScriptLogger.error(new Exception(message));
 	}
+	
+	public ScriptException(Exception e, String message){
+		super("Automated Script Exception-Please check error log");
+		ScriptLogger.error(new Exception(message));
+		ScriptLogger.error(e);
+	}
 }
