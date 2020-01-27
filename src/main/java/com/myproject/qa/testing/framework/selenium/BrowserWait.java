@@ -175,7 +175,6 @@ public class BrowserWait extends InstanceAccess{
 			documentState=(String)jsDriver.executeScript("return document.readyState");
 			Thread.sleep(1000);
 		} 
-		//System.out.println("DOM loading state is: " +documentState);
 	}
 
 

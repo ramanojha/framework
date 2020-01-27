@@ -10,9 +10,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import com.myproject.qa.testing.framework.files.Files;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 import com.myproject.qa.testing.framework.properties.SeleniumProperties;
+import com.myproject.qa.testing.framework.utils.FileUtils;
 
 public class InitializeWebDriver {
 
@@ -71,7 +71,7 @@ public class InitializeWebDriver {
 		default:
 			break;
 		}	
-		if(Files.isFile(path))
+		if(FileUtils.isFile(path))
 			return path;
 		else
 			ScriptLogger.debug("Setup this path :"+path);

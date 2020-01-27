@@ -13,7 +13,7 @@ import java.util.Locale;
 import com.myproject.qa.testing.framework.exceptions.ScriptException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
-public class DateUtil {
+public class DateUtils {
 
 	public static String getCurrentDate(String... pattern) throws Exception {
 		try {

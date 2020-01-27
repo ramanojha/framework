@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 import org.apache.log4j.PropertyConfigurator;
 
-import com.myproject.qa.testing.framework.files.Files;
+import com.myproject.qa.testing.framework.utils.FileUtils;
 
 public class ScriptLogger {
 		
@@ -16,7 +16,7 @@ public class ScriptLogger {
 		
 		static{
 			setHostNameInLog4jProperties();
-			PropertyConfigurator.configure(Files.getMavenProjectPath("framework")+"\\resources\\log4j.properties");
+			PropertyConfigurator.configure(FileUtils.getMavenProjectPath("framework")+"\\resources\\log4j.properties");
 			logger = Logger.getLogger(ScriptLogger.class);
 			//logger.info("Test Running on.. - "+System.getProperty("hostName").split("\\.")[0]);
 		}
