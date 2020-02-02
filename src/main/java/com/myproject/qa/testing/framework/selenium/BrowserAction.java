@@ -1,12 +1,19 @@
 package com.myproject.qa.testing.framework.selenium;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Rotatable;
 import org.openqa.selenium.ScreenOrientation;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -15,6 +22,8 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.myproject.qa.testing.framework.exceptions.ScriptException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
+import com.myproject.qa.testing.framework.properties.SeleniumProperties;
+import com.myproject.qa.testing.framework.utils.ShellUtils;
 
 
 public class BrowserAction extends InstanceAccess{
@@ -28,14 +37,12 @@ public class BrowserAction extends InstanceAccess{
 	public static final String CTRL_A_KEYS = "CtrAKeys";
 
 	public static String parentWindowHandler = null;
+	public static String TERMINAL_TYPE = "CMD";
 
 	public static void openBrowser(String url) throws Exception {
 		driver.get(url);
 	}
 
-	public static String getCurrentUrl() throws Exception {
-		return driver.getCurrentUrl();
-	}
 	public static void closeBrowser() {
 		driver.quit();
 	}
@@ -73,13 +80,13 @@ public class BrowserAction extends InstanceAccess{
 	}
 
 	public static void clickAndClear( Object locator, String style1, String style2) 	throws Exception {
-		WebElement element = LocatorAccess.getElement(locator);
+		Object element = LocatorAccess.getElement(locator);
 		click(element, style1);
 		clear(element, style2);
 	}
 
 	public static void clickAndClear( Object locator) 	throws Exception {
-		WebElement element = LocatorAccess.getElement(locator);
+		Object element = LocatorAccess.getElement(locator);
 		click(element);
 		clear(element);
 	}
@@ -309,5 +316,433 @@ public class BrowserAction extends InstanceAccess{
 	public static void launchUrlInNewTab(String url) throws Exception {
 		jsDriver.executeScript("window.open('"+url+"','_blank');");
 		switchToNewTabTest();
+	}
+	
+
+	public static void launchURL(String url) {
+		driver.get(url);	
+	}
+
+	public static void navigateURL(String url) {
+		driver.navigate().to(url);
+	}
+
+	
+	public static void forwardPage(String url) {
+		driver.navigate().forward();
+	}
+
+	public static void backPage(String url) {
+		driver.navigate().back();
+	}
+
+	public static void maximizeWindow() {
+		driver.manage().window().maximize();
+	}
+	
+	public static void copyScreenShot(String path) throws IOException {
+		File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		FileUtils.copyFile(src, new File(path));
+	}
+
+	public static void getScreenShot() throws IOException{
+		TakesScreenshot ss = (TakesScreenshot) driver;
+		File src = ss.getScreenshotAs(OutputType.FILE);
+
+		String pngFileName = new SimpleDateFormat("yyyyMMddHHmm'.png'").format(new Date());
+		String screenshotFolder = System.getProperty("user.dir") + "/Screenshots/"+pngFileName;
+		FileUtils.copyFile(src, new File(screenshotFolder));
+
+	}
+
+
+	public static void uploadFile(Object upload, Object uploadFileButton, String filepath) throws Exception {
+		LocatorAccess.getElement(upload).sendKeys(filepath);
+		LocatorAccess.getElement(uploadFileButton).click();	
+	}
+	
+	public static void downloadFile(String downLoadDestination, Object downloadButton, String ...teminaltype) throws Exception {
+		//Sample in bash : /usr/local/bin/wget -P /Users/ramanojha/Documents/java-utils --no-check-certificate https://resumegenius.com/wp-content/uploads/2014/07/Template-DL-Basic-Classic-RWD.zip
+		//Sample in CMD  : cmd /c C:\\Wget\\wget.exe -P D: --no-check-certificate http://demo.guru99.com/selenium/msgr11us.exe
+		String sourceLocation = LocatorAccess.getElement(downloadButton).getAttribute("href");
+		String terminal, type ;
+		if(teminaltype.length ==0 || teminaltype[0].equals("cmd")){
+			terminal = "cmd /c "+SeleniumProperties.WGET_EXE_PATH.getValue();
+			type = "CMD";
+		}
+		else{
+			terminal = "/usr/local/bin/wget";
+			type = teminaltype[0];
+		}
+		String wgetCommand = terminal+" -P "+downLoadDestination+" --no-check-certificate "+sourceLocation;
+		ShellUtils.execute(type, wgetCommand);
+
+	}
+
+	public static void multiSelectDropDown(Object element, int... indexes) throws Exception {
+		Select select = new Select(LocatorAccess.getElement(element));
+		select.getOptions();
+		select.deselectAll();//first deselecting, if anything selected already
+		for(int index : indexes) {
+			select.selectByIndex(index);
+		}
+	}
+
+	public static void multiSelectDropDownByVisibleText(Object element, String ... dropdowns) throws Exception {
+		Select select = new Select(LocatorAccess.getElement(element));
+		select.getOptions();
+		select.deselectAll();
+		for(String dropdown : dropdowns) {
+			select.selectByVisibleText(dropdown);
+		}
+	}
+
+	//MultiSelect DropDown
+	public static void multiSelectDropDownByValue(Object element, String... dropdowns) throws Exception {
+		Select select = new Select(LocatorAccess.getElement(element));
+		select.getOptions();
+		select.deselectAll();
+		for(String dropdown : dropdowns) {
+			select.selectByValue(dropdown);
+		}
+	}
+
+	//Get select dropdowns
+	public static List<WebElement> getSelectedDropDowns(Object element) throws Exception {
+		Select select = new Select(LocatorAccess.getElement(element));
+		select.getOptions();
+		return select.getAllSelectedOptions();
+	}
+
+	//Get first select dropdown
+	public static Object getFirstSelectedDropDown(Object element) throws Exception {
+		Select select = new Select(LocatorAccess.getElement(element));
+		select.getOptions();
+		return select.getFirstSelectedOption();
+	}
+
+	//Dropdown by Action class
+	public static void selectDropDownAction(Object dropdown, Object target) throws Exception {
+		Actions actions = new Actions(driver);
+		actions.moveToElement(LocatorAccess.getElement(dropdown));
+		actions.moveToElement(LocatorAccess.getElement(target)).build();
+		actions.click().perform();
+	}
+
+	//Mouse over
+	public static void mouseOver(Object mouseover) throws Exception {
+		Actions actions = new Actions(driver);
+		actions.moveToElement(LocatorAccess.getElement(mouseover)).build().perform();
+	}
+
+	//Double click
+	public static void doubleClick() {
+		Actions actions = new Actions(driver);
+		actions.doubleClick().build().perform();
+	}
+
+	//Right click
+	public static void rightClick(Object target, int clickElementPosition) throws Exception {
+		Actions actions= new Actions(driver);
+		actions.contextClick(LocatorAccess.getElement(target));
+		for(int i=1; i <= clickElementPosition; i++) {
+			if(clickElementPosition==i)
+				actions.sendKeys(Keys.RETURN);
+			else
+				actions.sendKeys(Keys.ARROW_DOWN);
+		}
+		actions.build().perform();	
+	}
+
+
+	//Right click
+	public static void rightClick(int clickElementPosition) {
+		Actions actions= new Actions(driver);
+		actions.contextClick();
+		for(int i=1; i <= clickElementPosition; i++) {
+			if(clickElementPosition==i)
+				actions.sendKeys(Keys.RETURN);
+			else
+				actions.sendKeys(Keys.ARROW_DOWN);
+		}
+		actions.build().perform();	
+	}
+
+	//Drag and drop
+	public static void dragNdrop(Object source, Object target) throws Exception {
+		Actions actions= new Actions(driver);
+		actions.dragAndDrop(LocatorAccess.getElement(source), LocatorAccess.getElement(target)).perform();	
+	}
+
+	//drag and drop
+	public static void dragNdropWithMultipleActions(Object source, Object target) throws Exception {
+		Actions actions= new Actions(driver);
+		actions.clickAndHold(LocatorAccess.getElement(source))
+		.moveToElement(LocatorAccess.getElement(target))
+		.release(LocatorAccess.getElement(source)).build().perform();
+	}
+
+	//drag and drop
+	public static void dragNdrop(Object source, Object target, int xOffset, int yOffset) throws Exception {
+		Actions actions= new Actions(driver);
+		actions.clickAndHold(LocatorAccess.getElement(source))
+		.dragAndDropBy(LocatorAccess.getElement(source), xOffset, yOffset).perform();
+	}
+
+	//resize window
+	//slider
+	public static void resizeWindowByOffset(Object target, int xOffset, int yOffset) throws Exception {
+		Actions actions = new Actions(driver);
+		actions.clickAndHold(LocatorAccess.getElement(target))
+		.moveByOffset(xOffset, yOffset)
+		.release(LocatorAccess.getElement(target)).build().perform();
+	}
+
+	//switch to alert
+	public static void swtichToAlert(String acceptOrdismiss) {
+		Alert alert = driver.switchTo().alert();
+		if(acceptOrdismiss.equals("ACCEPT"))
+			alert.accept();  
+		else
+			alert.dismiss();	
+	}	
+
+	//send Keys to Alert
+	public static void sendkeysToAlert(String keys) {
+		driver.switchTo().alert().sendKeys(keys);  
+	}
+
+	//get text of alert
+	public static String getAlertText(String keys) {
+		return driver.switchTo().alert().getText();
+	}
+
+	//previous tab
+	public static void previousTab() {
+		Actions actions = new Actions(driver);
+		actions.keyDown(Keys.CONTROL).keyDown(Keys.SHIFT).keyDown(Keys.TAB).build().perform();
+	}
+
+	//forward tab
+	public static void forwardTab() {
+		Actions actions = new Actions(driver);
+		actions.keyDown(Keys.CONTROL).keyDown(Keys.TAB).build().perform();
+	}
+
+	//new tab
+	public static void newTab() {
+		Actions actions = new Actions(driver);
+		actions.keyDown(Keys.CONTROL).sendKeys("t").build().perform();
+	}
+
+	//new tab which was closed
+	public static void oldTab() {
+		Actions actions = new Actions(driver);
+		actions.keyDown(Keys.CONTROL).keyDown(Keys.SHIFT).sendKeys("t").build().perform();
+	}
+
+	public static String getCurrentUrl() {
+		return driver.getCurrentUrl();
+	}
+	
+	public static String getTitle() {
+		return driver.getTitle();
+	}
+
+	public static String getPageSource() {
+		return driver.getPageSource();
+	}
+	
+	public static Object activeElements() {
+		return driver.switchTo().activeElement();	
+	}
+
+	public static void switchParentFrame() {
+		driver.switchTo().parentFrame();	
+	}
+
+	public static void switchFrame(int index) {
+		driver.switchTo().frame(index);	
+	}
+	
+	public static void switchFrame(String frame) {
+		driver.switchTo().frame(frame);
+	}
+	
+	public static void switchFrame(Object element) throws Exception {
+		driver.switchTo().frame(LocatorAccess.getElement(element));
+	}
+
+	public static void switchDefaultContent() {
+		driver.switchTo().defaultContent();
+	}
+	
+	//to get color of the Object
+	//https://www.rapidtables.com/convert/color/hex-to-rgb.html
+	public static String getCssValue(Object element, String cssAttribute) throws Exception {
+		return LocatorAccess.getElement(element).getCssValue(cssAttribute);
+	}
+	
+	
+	//change color and hold for 20 milli seconds.
+	public static void changeColor(String color, Object element ) throws Exception {
+		jsDriver.executeScript(" = '"+color+"'",  LocatorAccess.getElement(element));
+		Thread.sleep(20);
+	}
+
+	//draw border on webpage
+	public static void drawBorder(Object element ) throws Exception{
+		jsDriver.executeScript("arguments[0].style.border='3px solid red'", LocatorAccess.getElement(element));
+	}
+
+	//generate alert
+	public static void generateAlert(String message){
+		jsDriver.executeScript("alert('"+message+"')");
+
+	}
+
+	//click on any element by using JS executor
+	//click on hidden element.
+	public static void clickElementByJS(Object element) throws Exception{
+		jsDriver.executeScript("arguments[0].click();", LocatorAccess.getElement(element));
+
+	}
+
+	//refresh webpage
+	public static void refreshBrowserByJS(){
+		jsDriver.executeScript("history.go(0)");
+	}
+
+	//get Title
+	public static String getTitleByJS(){
+		return jsDriver.executeScript("return document.title;").toString();
+	}
+
+	//get page text
+	public static String getPageInnerText(){
+		return jsDriver.executeScript("return document.documentElement.innerText;").toString();
+	}
+
+	// scroll down page till last point
+	public static void scrollPageDown(){
+		jsDriver.executeScript("window.scrollTo(0,document.body.scrollHeight)");
+	}
+
+	// scroll down page till element is not matcheda
+	public static void scrollIntoView(Object element ) throws Exception{
+		jsDriver.executeScript("arguments[0].scrollIntoView(true);", LocatorAccess.getElement(element));
+	}
+
+	//flash the web Element
+	public static void flash(Object element ) throws Exception {
+		String bgcolor  = LocatorAccess.getElement(element).getCssValue("backgroundColor");
+		for (int i = 0; i <  10; i++) {
+			changeColor("rgb(0,200,0)", element);//1
+			changeColor(bgcolor, element);//2
+		}
+	}
+
+	public static void openLinkinNewTab(int index, String url) throws Exception{
+		jsDriver.executeScript("window.parent = window.open('"+url+"');");
+		switchToNewTabTest();
+	}
+
+
+	// click on submenu, which is only visible by mouse hover
+	public static void clickSubmenu(Object element){
+		jsDriver.executeScript("$('ul.menus.menu-secondary.sf-js-enabled.sub-menu li').hover()", element);
+	}
+
+	//scroll down by coordinates
+	public static void scrollbyCoordinates(Object element){
+		jsDriver.executeScript("window.scrollBy(300,2000);");
+	}
+
+
+	//get URL
+	//navigate to different webpage	
+	public static void getURL(String url) throws InterruptedException{
+		jsDriver.executeScript("window.location = \'"+url+"\'");
+	}
+
+	//get innerHTML of the page
+	public static String getInnerHTML(){
+		return jsDriver.executeScript("return document.documentElement.innerHTML;").toString();
+		
+	}
+
+	// get domain
+	public String getDomain(Object element, String value){
+		return jsDriver.executeScript("return document.domain;").toString();
+
+
+	}
+
+	// get url
+	public String getURL(Object element, String value){
+		return jsDriver.executeScript("return document.URL;").toString();
+		
+
+	}
+
+	//handle checkbox
+	public void checkbox(Object element, boolean checkbox){
+		jsDriver.executeScript("arguments[0].checked="+checkbox+";", element);
+		//js.executeScript("document.getElementById('enter element id').checked=true;");
+	}
+
+
+	//highlight Object
+	public static void highlightObject(Object element ) throws Exception {
+		jsDriver.executeScript("arguements[0].setAttribute('style', arguments[1]);", LocatorAccess.getElement(element), 
+				"background:yellow; "
+						+ "color: Red; "
+						+ "border: 4px dotted solid yellow;"
+				);
+		jsDriver.executeScript("arguements[0].setAttribute('style', arguments[1]);", LocatorAccess.getElement(element), 
+				"background:yellow; color: Red; border: 4px dotted solid yellow;");
+	}
+
+	//gererate confirm
+	public static void generateConfirm(String message){
+		jsDriver.executeScript("confirm('"+message+"')");
+
+	}
+	//generate prompt
+	public static void generatePrompt(String message){
+		jsDriver.executeScript("prompt('"+message+"')");
+
+	}
+
+	//Ristrict link to NewTab
+	public static void ristrictToNewTab(Object element ) throws Exception{
+		jsDriver.executeScript("arguments[0].setAttribute('target','_self');", LocatorAccess.getElement(element));
+		LocatorAccess.getElement(element).click();
+	}
+
+	//Right click 
+	public static void rightClickJS(Object element) throws Exception {
+		String javaScript = "var evt = document.createEvent('MouseEvents');"
+				+ "var RIGHT_CLICK_BUTTON_CODE = 2;"
+				+ "evt.initMouseEvent('contextmenu', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, RIGHT_CLICK_BUTTON_CODE, null);"
+				+ "arguments[0].dispatchEvent(evt)";
+		jsDriver.executeScript(javaScript, LocatorAccess.getElement(element));	
+	}
+
+	//Enter text in disabled text box
+	public static Object enableTextbox(Object element) throws Exception {	
+		String todisable = "arguements[0].setAttribute('disabled', 'true');";
+		jsDriver.executeScript(todisable, LocatorAccess.getElement(element));
+		return LocatorAccess.getElement(element);
+	}
+	
+	public static Object disableTextbox(Object element) throws Exception {	
+		String todisable = "arguements[0].setAttribute('disabled', 'false');";
+		jsDriver.executeScript(todisable, LocatorAccess.getElement(element));
+		return LocatorAccess.getElement(element);
+	}
+
+	public static void inputDateInField(Object element, String formatedDate) throws Exception {
+		jsDriver.executeScript("arguements[0].setAttribute('"+formatedDate+"')", LocatorAccess.getElement(element));
 	}
 }

@@ -245,9 +245,16 @@ public class BrowserAssert extends InstanceAccess {
 	}
 
 	public static void assertBase64URLContainsText(String string) throws Exception {
-
 		boolean status = !ImageUtils.decodeBase64(BrowserAction.getFullCurrentUrl().split("q=")[1]).contains(string);
 		assertTrue(status, string+" String not found in URL");
 	}
 
+	
+	public static boolean isTextBoxEmpty(Object element) throws Exception{
+		String textInsideInputBox = LocatorAccess.getElement(element).getAttribute("value");
+		return (textInsideInputBox.isEmpty())? true : false;	
+	}
+	public static void assertTextBoxIsEmpty(Object element) throws Exception{
+		assertTrue(isTextBoxEmpty(element), "Text box is not empty");
+	}
 }
