@@ -169,7 +169,7 @@ public class BrowserWait extends InstanceAccess{
 
 	}
 
-	public static void waitForWaitPageToBeLoaded() throws Exception {
+	public static void waitUntilPageIsLoaded() throws Exception {
 		String documentState=(String)jsDriver.executeScript("return document.readyState");
 		while (!documentState.equalsIgnoreCase("complete")) {
 			documentState=(String)jsDriver.executeScript("return document.readyState");

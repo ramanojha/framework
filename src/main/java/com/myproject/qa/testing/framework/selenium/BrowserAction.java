@@ -340,12 +340,12 @@ public class BrowserAction extends InstanceAccess{
 		driver.manage().window().maximize();
 	}
 	
-	public static void copyScreenShot(String path) throws IOException {
+	public static void takeScreenShot(String path) throws IOException {
 		File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		FileUtils.copyFile(src, new File(path));
 	}
 
-	public static void getScreenShot() throws IOException{
+	public static void takeScreenShot() throws IOException{
 		TakesScreenshot ss = (TakesScreenshot) driver;
 		File src = ss.getScreenshotAs(OutputType.FILE);
 

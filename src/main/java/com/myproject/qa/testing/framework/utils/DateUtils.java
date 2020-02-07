@@ -1,5 +1,6 @@
 package com.myproject.qa.testing.framework.utils;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -160,4 +161,23 @@ public class DateUtils {
 		}  
 	}
 
+	public static String getMillisToTimeStamp(Long timeInMillis, String... pattern){
+		 Timestamp ts=new Timestamp(timeInMillis);  
+         Date date=new Date(ts.getTime()); 
+         return (pattern.length==0) ? (new SimpleDateFormat("HH:mm:ss a")).format(date) : (new SimpleDateFormat(pattern[0])).format(date);
+	}
+	
+	public static long getDifferenceInDates(String startDate, String endDate, String... pattern) throws Exception{
+		String disiredPattern = (pattern.length==0) ? "HH:mm:ss a" : pattern[0];
+		Date d1;
+		Date d2;
+		try {
+			d1 = new SimpleDateFormat(disiredPattern).parse(startDate);
+			d2 = new SimpleDateFormat(disiredPattern).parse(endDate);
+		} catch (Exception e) {
+			throw new ScriptException(e, "Date is not parsable");
+		}
+		return (d2.getTime()-d1.getTime())/1000;
+   	}
+	
 }

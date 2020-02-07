@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
+import com.myproject.qa.testing.framework.report.Reporter;
 import com.myproject.qa.testing.framework.test.env.TestEnvironment;
 
 
@@ -14,9 +15,10 @@ public class BaseWebDriver {
 	private static int waitTime;
 
 	@BeforeSuite
-	@Parameters({"env", "browser", "waitTime"})
-	public static void intDriver(@Optional("qa")String env, @Optional("chrome")String browser, @Optional("5")int waitPeriod){
+	@Parameters({"env", "browser", "waitTime", "reportName"})
+	public static void initSetup(@Optional("qa")String env, @Optional("chrome")String browser, @Optional("5")int waitPeriod, @Optional("TestReport")String reportName){
 		waitTime = waitPeriod;
+		Reporter.setReportName(reportName);
 		TestEnvironment.setEnvConfigsTest(env);
 		InitializeWebDriver.setDriver(browser);	 
 	}
@@ -29,9 +31,10 @@ public class BaseWebDriver {
 	@BeforeMethod
 	@Parameters({"stabilityTime"})
 	public static void waitForStability(@Optional("1")int stabilityTime) throws Exception{
-		BrowserWait.waitForWaitPageToBeLoaded();
+		BrowserWait.waitUntilPageIsLoaded();
 		Thread.sleep(stabilityTime*1000);
 	}
+	
 	
 	public static int getWaitTime() {
 		return waitTime*1000;
