@@ -22,7 +22,6 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -193,21 +192,24 @@ public class PDFUtils {
 		insertCell(table, finalStatus, Element.ALIGN_CENTER, 1, cellFnt, "Background", (finalStatus.equals("FAIL")) ? BaseColor.RED : BaseColor.GREEN);
 		
 		// First row
+		insertCell(table, "Total Steps", Element.ALIGN_LEFT, 1, headerFnt, "Background", BaseColor.CYAN);
+		insertCell(table, Integer.toString(passedCnt+failedCnt+skippedCnt), Element.ALIGN_CENTER, 1, cellFnt);
+
 		insertCell(table, "Passed Steps", Element.ALIGN_LEFT, 1, headerFnt, "Background", BaseColor.CYAN);
 		insertCell(table, Integer.toString(passedCnt), Element.ALIGN_CENTER, 1, cellFnt);
 
 		insertCell(table, "Failed Steps", Element.ALIGN_LEFT, 1, headerFnt, "Background", BaseColor.CYAN);
 		insertCell(table, Integer.toString(failedCnt), Element.ALIGN_CENTER, 1, cellFnt);
 
+		// Second Row
 		insertCell(table, "Skipped Steps", Element.ALIGN_LEFT, 1, headerFnt, "Background", BaseColor.CYAN);
 		insertCell(table, Integer.toString(skippedCnt), Element.ALIGN_CENTER, 1, cellFnt);
-
-		// Second Row
+				
 		insertCell(table, "Date", Element.ALIGN_LEFT, 1, headerFnt, "Background", BaseColor.CYAN);
 		insertCell(table, DateUtils.getCurrentDate(), Element.ALIGN_CENTER, 1, cellFnt);
 		
 		insertCell(table, "Host name ", Element.ALIGN_LEFT, 1, headerFnt, "Background", BaseColor.CYAN);
-		insertCell(table, System.getProperty("hostName"), Element.ALIGN_LEFT, 3, cellFnt);
+		insertCell(table, System.getProperty("hostName"), Element.ALIGN_LEFT, 1, cellFnt);
 
 	
 		// Third Row

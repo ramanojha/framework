@@ -108,5 +108,4 @@ public class WebListener implements ITestListener, ISuiteListener{
 		PDFUtils.writePDF(fileName, testResults, suite);
 	}
 	
-
 }
