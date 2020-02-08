@@ -24,19 +24,22 @@ public class WebListener implements ITestListener, ISuiteListener{
 	public Map<String, List<ITestResult>> testResults = new LinkedHashMap<String, List<ITestResult>>();
 	public List<ITestResult> results;
 	String stabilityTime;
+	private String suiteFileName;
 
 	
 	@Override
 	public void onStart(ISuite suite) {
 		ScriptLogger.info();
+		suite.setAttribute("startTime", System.currentTimeMillis());
 		stabilityTime = suite.getParameter("stabilityTime");
-
 	}
 	
 	@Override
 	public void onFinish(ISuite suite) {
+		suite.setAttribute("suiteFileName", suiteFileName);
+		suite.setAttribute("endTime", System.currentTimeMillis());
 		try {
-			createPDFArtifact(Reporter.reportName, testResults);
+			createPDFArtifact(Reporter.reportName, testResults, suite);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -51,11 +54,11 @@ public class WebListener implements ITestListener, ISuiteListener{
 	@Override
 	public void onStart(ITestContext result) {
 		results = new ArrayList<ITestResult>();
+		suiteFileName = result.getCurrentXmlTest().getSuite().getFileName();
 	}
 
 	@Override
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-
 	}
 
 	@Override
@@ -74,7 +77,6 @@ public class WebListener implements ITestListener, ISuiteListener{
 
 	@Override
 	public void onTestStart(ITestResult result) {
-		ScriptLogger.info();
 		try {
 			if(BrowserAccess.getDriver() !=null)
 				BrowserWait.waitUntilPageIsLoaded();
@@ -101,9 +103,9 @@ public class WebListener implements ITestListener, ISuiteListener{
 		}	
 	}
 	
-	public void createPDFArtifact(String fileName, Map<String, List<ITestResult>> testResults) throws Exception{
+	public void createPDFArtifact(String fileName, Map<String, List<ITestResult>> testResults, ISuite suite) throws Exception{
 		ScriptLogger.info("ReportName :"+fileName);
-		PDFUtils.writePDF(fileName, testResults);
+		PDFUtils.writePDF(fileName, testResults, suite);
 	}
 	
 
