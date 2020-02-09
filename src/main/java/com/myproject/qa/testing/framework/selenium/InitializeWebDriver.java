@@ -1,6 +1,6 @@
 package com.myproject.qa.testing.framework.selenium;
 
-
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,21 +9,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
-import com.myproject.qa.testing.framework.properties.SeleniumProperties;
-import com.myproject.qa.testing.framework.utils.FileUtils;
 
 public class InitializeWebDriver {
 
 	private static WebDriver driver;
 	private static String browser;
-	public static void setDriver(String driverType){
+	public static void setDriver(String driverType) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		browser = driverType;
+		
 		if(driver == null){
 			switch (browser) {
 			case "chrome" :
-				System.setProperty(SeleniumProperties.CHROME_WEB_DRIVER_EXE.getValue(), getdriverPath(browser));
+				WebDriverManager.chromedriver().setup();
+				
 				ChromeOptions options = new ChromeOptions();
 				ChromeDriverService service = ChromeDriverService.createDefaultService(); 
 				options.addArguments("--disable--notifications");
@@ -39,14 +40,18 @@ public class InitializeWebDriver {
 				prefs.put("download.prompt_for_download", false);
 				prefs.put("download.default_directory", "C:\\TestData\\Downloads");
 				options.setExperimentalOption("prefs", prefs);
+				
 				driver  = new ChromeDriver(service, options); 
+				
 				break;
-
+				
+			case "firefox":
+				WebDriverManager.firefoxdriver().setup();
+				driver  = new FirefoxDriver();
+				
 			default:
 				break;
 			}
-
-			driver.manage().window().maximize();
 		}else{
 			ScriptLogger.info("Driver is already initialized");	
 		}
@@ -55,26 +60,9 @@ public class InitializeWebDriver {
 	public static WebDriver getDriver(){
 		return driver;
 	}
-	
+
 	public static String getBrowser(){
 		return browser;
 	}
-	
 
-	private static String getdriverPath(String browser){
-		String path = null ;
-		switch (browser) {
-		case "chrome":
-			path = SeleniumProperties.CHROME_WEB_DRIVER_PATH.getValue()+"\\chromedriver.exe";
-			break;
-
-		default:
-			break;
-		}	
-		if(FileUtils.isFile(path))
-			return path;
-		else
-			ScriptLogger.debug("Setup this path :"+path);
-		return null;
-	}
 }

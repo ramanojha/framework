@@ -29,7 +29,6 @@ public class WebListener implements ITestListener, ISuiteListener{
 	
 	@Override
 	public void onStart(ISuite suite) {
-		ScriptLogger.info();
 		suite.setAttribute("startTime", System.currentTimeMillis());
 		stabilityTime = suite.getParameter("stabilityTime");
 	}
@@ -83,7 +82,7 @@ public class WebListener implements ITestListener, ISuiteListener{
 
 			Thread.sleep(Integer.parseInt(stabilityTime)*1000);
 		} catch(Exception e){
-			ScriptLogger.info();
+			e.printStackTrace();;
 		}
 	}
 

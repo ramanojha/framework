@@ -1,15 +1,30 @@
 package com.myproject.qa.testing.framework.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParseException;
+import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
 public class FileUtils {
-	public static String convertStreamToString(InputStream is) {
+	
+	public static String convertStreamToString(InputStream is) throws Exception {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder sb = new StringBuilder();
@@ -19,14 +34,11 @@ public class FileUtils {
 			while ((line = reader.readLine()) != null) {
 				sb.append(line + "\n");
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new FrameworkException(e, "Unable to convert Streem to String");
 		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			is.close();
+			reader.close();
 		}
 		return sb.toString();
 	}
@@ -57,7 +69,11 @@ public class FileUtils {
 	
 	public static String getMavenProjectPath(String projectName){
 		String path = System.getProperty("user.dir");
-		return path.substring(0, path.lastIndexOf("\\")+1)+projectName;		
+		try {
+			return path.substring(0, path.lastIndexOf("\\")+1)+projectName;
+		} catch (Exception e) {
+			throw new FrameworkException(e, projectName=" is not in same workspace");
+		}		
 	}
 	
 	public static boolean ifFileExist(String filepath) throws Exception {
@@ -66,6 +82,138 @@ public class FileUtils {
 
 	public static boolean deleteFile(String filepath) throws Exception {
 		return (new File(filepath)).delete();
+	}
+	
+	public static String readFile(String fileName) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		return bufferedReader(br);
+	}
+
+	//Read a filename
+	//Using FileInputStreem instead of FileReader in file have weird characters
+	public static InputStream readFileAsItIs(String fileName) throws IOException {
+		int i =0;
+		FileInputStream inputStream = new FileInputStream(fileName);
+		while((i = inputStream.read()) != -1) {
+			//System.out.print((char)i);
+		}   
+		return inputStream;        
+
+	}
+	
+	//Read a excel and return workbook
+	public static XSSFWorkbook readExcel(String fileName) throws IOException {
+		FileInputStream inputStream = new FileInputStream(new File(fileName));
+		return new XSSFWorkbook(inputStream);
+	}
+	
+
+	//Write a File(read character by character)
+	public static void writeFile(String fileName, String str) throws IOException {
+	
+		BufferedWriter bufferedWriter = null;
+		try {
+			bufferedWriter = new BufferedWriter(new FileWriter(new File(fileName)));
+			bufferedWriter.write(str);
+		} catch (Exception e) {
+			throw new FrameworkException(e, "Unable to write file at "+fileName);
+		}
+		finally{
+			bufferedWriter.close();
+		}
+	}
+
+	//Write a File(Read file by file)
+	public static void writeFileFromStreem(String fileName, String str) throws IOException {
+		FileOutputStream outputStream =new FileOutputStream(fileName);
+		outputStream.write(str.getBytes());
+		outputStream.close();
+	}
+
+	//Format json
+	public static String formatJSON(String jsonString) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		Object jsonObject = mapper.readValue(jsonString, Object.class);
+		String formattedJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+		return formattedJson;
+	}
+
+	//Write formatted Json
+	public static void writeFormatedJSON(String jsonString, String fileName) throws JsonParseException, JsonMappingException, IOException {
+		String formatedJson = formatJSON(jsonString);
+		writeFile(fileName, formatedJson);
+	}
+
+	//Write Excel
+	public static void writeExcel(String filename, XSSFWorkbook workbook) throws IOException {
+		FileOutputStream stream = new FileOutputStream(new File(filename));
+		workbook.write(stream);
+		workbook.close();
+	}
+	
+	//List of fileNames in a folder
+	public static List<String> filesInDirectory(String relativePath) {
+
+		File folder = new File(relativePath);
+		File[] files = folder.listFiles();
+		List<String> fileNames = new ArrayList<String>();
+		for(File file : files) {
+			if(!file.isDirectory())
+			fileNames.add(file.getName());
+		}
+		return fileNames;
+	}
+
+	//PropertyFile
+	public static Properties propertyFile(String fileName) throws IOException {
+		
+		Properties prop = new Properties();
+		InputStream inStream = new FileInputStream(fileName);
+		prop.load(inStream);
+		return prop;
+	}
+
+	//Read InputStream
+	public static String readInputStream(InputStream inputStream) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+		return bufferedReaderWithNewLine(br);
+	}
+	
+	public static String readInputStreaminKB(InputStream inputStream) throws IOException {
+		
+		byte[] bytes=new byte[1024];
+		int i;
+		String output = "";
+		while((i =inputStream.read(bytes, 0, 1024)) != -1) {
+			output +=  new String(bytes, 0, i);
+		}
+		return output;
+	}
+	
+	//Read Buffer and doesn't append new line.
+	public static String  bufferedReader(BufferedReader bufferedReader) throws IOException {
+	
+		String line = bufferedReader.readLine();
+		StringBuffer sb = new StringBuffer();
+		while(line != null) {
+			sb.append(line);
+			line = bufferedReader.readLine();
+		} 
+		bufferedReader.close(); 
+		return sb.toString();
+	}
+	
+	//Read Buffer and append new line.
+	public static String  bufferedReaderWithNewLine(BufferedReader bufferedReader) throws IOException {
+		
+		String line = bufferedReader.readLine();
+		StringBuffer sb = new StringBuffer();
+		while(line != null) {
+			sb.append(line).append("\n");
+			line = bufferedReader.readLine();
+		} 
+		bufferedReader.close(); 
+		return sb.toString();
 	}
 }
 

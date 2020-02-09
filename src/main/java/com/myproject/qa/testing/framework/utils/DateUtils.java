@@ -11,7 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import com.myproject.qa.testing.framework.exceptions.ScriptException;
+import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
 public class DateUtils {
@@ -25,7 +25,7 @@ public class DateUtils {
 			ScriptLogger.info("Date is: "+date);
 			return date;
 		} catch (Exception e) {
-			throw new Exception(e);
+			throw new FrameworkException(e);
 		}
 	}
 
@@ -41,7 +41,7 @@ public class DateUtils {
 			ScriptLogger.info("Date is: "+yesterdayDate);
 			return yesterdayDate;
 		} catch (Exception e) {
-			throw new Exception(e);
+			throw new FrameworkException(e);
 		}
 	}
 	public static String getTomorrowDate(String... pattern) throws Exception {
@@ -56,7 +56,7 @@ public class DateUtils {
 			ScriptLogger.info("Date is: "+yesterdayDate);
 			return yesterdayDate;
 		} catch (Exception e) {
-			throw new Exception(e);
+			throw new FrameworkException(e);
 		}
 	}
 	public static String getPreviousDateByDays(int days, String... pattern) throws Exception {
@@ -71,7 +71,7 @@ public class DateUtils {
 			ScriptLogger.info("Date is: "+nDaysBeforeDate);
 			return nDaysBeforeDate;
 		} catch (Exception e) {
-			throw new Exception(e);
+			throw new FrameworkException(e);
 		}
 	}
 
@@ -87,7 +87,7 @@ public class DateUtils {
 			ScriptLogger.info("Date is: "+nDaysAfterDate);
 			return nDaysAfterDate;
 		} catch (Exception e) {
-			throw new Exception(e);
+			throw new FrameworkException(e);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class DateUtils {
 			date1  = format.parse(firstDate);
 			date2 = format.parse(secondDate);
 		} catch (Exception e) {
-			throw new ScriptException(e);
+			throw new FrameworkException(e);
 		}
 		return date1.compareTo(date2);
 	}
@@ -118,7 +118,7 @@ public class DateUtils {
 			ScriptLogger.info("Number of Days between dates: "+daysBetween);
 			return daysBetween;
 		} catch (Exception e) {
-			throw new ScriptException(e, "Unable to get the difference of days between "+date1+" and "+date2);
+			throw new FrameworkException(e, "Unable to get the difference of days between "+date1+" and "+date2);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class DateUtils {
 			ScriptLogger.info("getPreviousDateOfDayOfWeekTest "+getPreviousDateOfDayOfWeekTest);
 			return getPreviousDateOfDayOfWeekTest;
 		}catch(Exception e) {
-			throw new ScriptException(e, "Unable to get date of previous sunday");
+			throw new FrameworkException(e, "Unable to get date of previous sunday");
 		}
 	}
 
@@ -145,7 +145,7 @@ public class DateUtils {
 			ScriptLogger.info("This is the nth("+nthDay+"th) date of nth("+nthDay+"th) Last months prior to today "+getFirstDateofNthLastMonth);
 			return getFirstDateofNthLastMonth;
 		}catch(Exception e) {
-			throw new ScriptException(e, "Unable to get first date of 3 months prior to today");
+			throw new FrameworkException(e, "Unable to get first date of 3 months prior to today");
 		}
 	}
 
@@ -157,7 +157,7 @@ public class DateUtils {
 			Date oldFormattedDate = originalFormat.parse(date);
 			return targetFormat.format(oldFormattedDate);
 		} catch (Exception e) {
-			throw new ScriptException("Unable to convert date in desired format.");
+			throw new FrameworkException(e, "Unable to convert date in desired format.");
 		}  
 	}
 
@@ -175,7 +175,7 @@ public class DateUtils {
 			d1 = new SimpleDateFormat(disiredPattern).parse(startDate);
 			d2 = new SimpleDateFormat(disiredPattern).parse(endDate);
 		} catch (Exception e) {
-			throw new ScriptException(e, "Date is not parsable");
+			throw new FrameworkException(e, "Date is not parsable");
 		}
 		return (d2.getTime()-d1.getTime())/1000;
    	}

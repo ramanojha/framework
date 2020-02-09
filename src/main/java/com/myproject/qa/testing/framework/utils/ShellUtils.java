@@ -23,7 +23,7 @@ public class ShellUtils {
 	}
 
 	//Exceute shell command
-	public static String execute(String type, String command) throws IOException, InterruptedException {
+	public static String execute(String type, String command) throws Exception {
 		ScriptLogger.info("Entered command : "+command);
 		Process process = run(type, command);
 		process.waitFor();

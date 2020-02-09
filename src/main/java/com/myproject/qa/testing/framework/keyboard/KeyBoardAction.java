@@ -5,13 +5,13 @@ import java.awt.event.KeyEvent;
 
 import org.openqa.selenium.Keys;
 
+import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.exceptions.ScriptException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 import com.myproject.qa.testing.framework.selenium.LocatorAccess;
 
 public class KeyBoardAction {
 	public static void openNewTabUsingKeyBoard() throws Exception {
-		ScriptLogger.info();
 		try {
 			Robot robot = new Robot();
 			robot.keyPress(KeyEvent.VK_CONTROL);
@@ -21,12 +21,11 @@ public class KeyBoardAction {
 			robot.keyRelease(KeyEvent.VK_T);
 
 		} catch (Exception e) {
-			throw new ScriptException(e);
+			throw new FrameworkException(e, "Unable to open new tab using Keyboard");
 		}
 	}
 	
 	public static void presTabKey(Object locator) throws Exception {
-		ScriptLogger.info();
 		LocatorAccess.getElement(locator).sendKeys(Keys.TAB);
 	}
 	
@@ -40,7 +39,7 @@ public class KeyBoardAction {
 			robot.keyRelease(KeyEvent.VK_ESCAPE);
 
 		} catch (Exception e) {
-			throw new ScriptException(e);
+			throw new FrameworkException(e);
 		}
 	}
 
@@ -56,7 +55,7 @@ public class KeyBoardAction {
 			robot.keyRelease(KeyEvent.VK_F4);
 
 		} catch (Exception e) {
-			throw new ScriptException(e);
+			throw new FrameworkException(e);
 		}
 	}
 	
@@ -68,7 +67,7 @@ public class KeyBoardAction {
 			robot.keyPress(KeyEvent.VK_TAB);
 			robot.keyRelease(KeyEvent.VK_TAB);	
 		} catch (Exception e) {
-			throw new ScriptException(e);
+			throw new FrameworkException(e);
 		}
 		
 	}

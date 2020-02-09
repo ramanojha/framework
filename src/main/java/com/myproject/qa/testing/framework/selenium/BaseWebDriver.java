@@ -16,7 +16,7 @@ public class BaseWebDriver {
 
 	@BeforeSuite
 	@Parameters({"env", "browser", "waitTime", "reportName"})
-	public static void initSetup(@Optional("qa")String env, @Optional("chrome")String browser, @Optional("5")int waitPeriod, @Optional("TestReport")String reportName){
+	public static void initSetup(@Optional("qa")String env, @Optional("chrome")String browser, @Optional("5")int waitPeriod, @Optional("TestReport")String reportName) throws Exception{
 		waitTime = waitPeriod;
 		Reporter.setReportName(reportName);
 		TestEnvironment.setEnvConfigsTest(env);

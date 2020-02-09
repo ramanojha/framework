@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.testng.ISuite;
 import org.testng.ISuiteResult;
 import org.testng.ITestContext;
@@ -25,6 +23,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
 public class PDFUtils {
@@ -59,7 +58,7 @@ public class PDFUtils {
 			document.add(setParagraph("\n", Element.ALIGN_CENTER));
 
 		} catch (Exception e) {
-			throw new ScriptException(e);
+			throw new FrameworkException(e);
 		}
 		finally{
 			document.close();
@@ -318,7 +317,6 @@ public class PDFUtils {
 		for(String cell : cells){
 			insertCell(table, cell, style, 1, font);
 		}
-
 	}
 
 	private static void insertCell(PdfPTable table, String text, int align, int mergeColLeftToRight, Font font) throws Exception{
@@ -337,7 +335,7 @@ public class PDFUtils {
 			//add the call to the table
 			table.addCell(cell);
 		} catch (Exception e) {
-			throw new ScriptException("Unable to insert Cell");
+			throw new FrameworkException(e, "Unable to insert Cell");
 		}
 
 	}
@@ -367,7 +365,7 @@ public class PDFUtils {
 			}
 			table.addCell(cell);
 		} catch (Exception e) {
-			throw new ScriptException("Unable to insert Cell");
+			throw new FrameworkException(e, "Unable to insert Cell");
 		}
 
 	}
@@ -396,7 +394,7 @@ public class PDFUtils {
 			//add the call to the table
 			table.addCell(cell);
 		} catch (Exception e) {
-			throw new ScriptException("Unable to insert image");
+			throw new FrameworkException(e,"Unable to insert image");
 		}
 
 	}
