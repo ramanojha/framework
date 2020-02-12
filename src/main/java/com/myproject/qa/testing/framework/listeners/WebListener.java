@@ -17,7 +17,7 @@ import com.myproject.qa.testing.framework.logs.ScriptLogger;
 import com.myproject.qa.testing.framework.report.Reporter;
 import com.myproject.qa.testing.framework.selenium.BrowserAccess;
 import com.myproject.qa.testing.framework.selenium.BrowserWait;
-import com.myproject.qa.testing.framework.utils.PDFUtils;
+import com.myproject.qa.testing.framework.utils.ListenerUtils;
 
 public class WebListener implements ITestListener, ISuiteListener{
 	
@@ -62,6 +62,11 @@ public class WebListener implements ITestListener, ISuiteListener{
 
 	@Override
 	public void onTestFailure(ITestResult result) {
+		try {
+			result.setAttribute("pageTitles",BrowserAccess.getPageTitlesInString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		result.setAttribute("screenshot", getScreenShot());
 		result.setAttribute("exception", result.getThrowable().getMessage());
 		result.setAttribute("stacktrace", result.getThrowable().getStackTrace());
@@ -104,7 +109,7 @@ public class WebListener implements ITestListener, ISuiteListener{
 	
 	public void createPDFArtifact(String fileName, Map<String, List<ITestResult>> testResults, ISuite suite) throws Exception{
 		ScriptLogger.info("ReportName :"+fileName);
-		PDFUtils.writePDF(fileName, testResults, suite);
+		ListenerUtils.writePDF(fileName, testResults, suite);
 	}
 	
 }

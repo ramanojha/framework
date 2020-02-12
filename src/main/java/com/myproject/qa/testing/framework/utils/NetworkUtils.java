@@ -8,7 +8,7 @@ import java.util.Scanner;
 import com.myproject.qa.testing.framework.exceptions.ApplicationException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
-public class NetworkUtil {
+public class NetworkUtils {
 	public static String getCountryByIpTest() throws Exception {
 		String IPAddress = "";
 		try (@SuppressWarnings("resource")

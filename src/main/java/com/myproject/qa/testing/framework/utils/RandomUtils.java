@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 import com.myproject.qa.testing.framework.exceptions.ScriptException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
-public class RandomUtil {
+public class RandomUtils {
 
 	public static String generateRandomMobileNumberTest() throws Exception {
 		ScriptLogger.info();

@@ -26,7 +26,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
-public class PDFUtils {
+public class ListenerUtils {
 
 	private static BaseColor statusColor;
 
@@ -276,6 +276,12 @@ public class PDFUtils {
 				}
 				insertCell(table, params, Element.ALIGN_LEFT,5,cellFnt);
 			}
+			
+			if(res.getAttribute("pageTitles") !=null){
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt);
+				insertCell(table, "Page titles", Element.ALIGN_RIGHT,1,cellFnt);
+				insertCell(table, (String)res.getAttribute("pageTitles"), Element.ALIGN_LEFT,5,cellFnt);
+			}
 
 			//exception
 			if((String)res.getAttribute("exception") != null){
@@ -295,6 +301,7 @@ public class PDFUtils {
 				insertCell(table, "Stacktrace", Element.ALIGN_RIGHT,1,cellFnt);
 				insertCell(table, buffer.toString(), Element.ALIGN_LEFT,5,cellFnt);
 			}
+
 			//screenshot
 			if((byte[])res.getAttribute("screenshot") !=null){
 				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt);

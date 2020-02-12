@@ -1,6 +1,7 @@
 package com.myproject.qa.testing.framework.selenium;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +40,22 @@ public class BrowserAccess extends InstanceAccess{
 		for(WebElement each : elements)
 			result.add(getElementText(each, js).trim());
 		return result;
+	}
+	
+	public static String getPageTitlesInString() throws Exception {
+		String currentTitle = driver.getTitle();
+		String currentHandle = driver.getWindowHandle();
+		String pageTitles = "";
+		for(String handle : driver.getWindowHandles()){
+			driver.switchTo().window(handle); 
+			String title = driver.getTitle();
+			if(title.equals(currentTitle))
+				pageTitles += "("+title+"), ";
+			else
+				pageTitles += title+", ";
+		}
+		driver.switchTo().window(currentHandle);
+		return pageTitles.substring(0, pageTitles.length()-2);
 	}
 	
 	public static String getPageTitle() throws Exception {
