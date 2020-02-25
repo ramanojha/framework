@@ -10,6 +10,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.myproject.qa.testing.framework.exceptions.ApplicationException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
@@ -215,5 +218,12 @@ public class JSONUtils
 			}
 		}
 		return object;
+	}
+	
+	public static String prettyPrintJSON(String json){
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		JsonParser jp = new JsonParser();
+		JsonElement je = jp.parse(json);
+		return gson.toJson(je);
 	}
 }

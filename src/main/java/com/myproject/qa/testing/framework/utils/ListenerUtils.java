@@ -251,8 +251,16 @@ public class ListenerUtils {
 		}
 		BaseColor finalTestStatusColor = testStatus.equals("PASS") ? lightGreenColor() : lightRedColor();
 		insertCell(table, testName, Element.ALIGN_LEFT, 7, nameFnt, "Background", finalTestStatusColor);
-		setHeaders(table, headerFnt, Element.ALIGN_CENTER, "No", "TestStep", "ClassName", "StartTime", "EndTime","Interval", "Status");
+		//setHeaders(table, headerFnt, Element.ALIGN_CENTER, "No", "TestStep", "ClassName", "StartTime", "EndTime","Interval", "Status");
 
+		insertCell(table, "No", Element.ALIGN_CENTER, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, "TestStep", Element.ALIGN_CENTER, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, "ClassName", Element.ALIGN_CENTER, 2, headerFnt, "Background", lightBlueColor());
+		insertCell(table, "StartTime", Element.ALIGN_CENTER, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, "EndTime", Element.ALIGN_CENTER, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, "Interval", Element.ALIGN_CENTER, 1, headerFnt, "Background", lightBlueColor());
+
+		
 		for (ITestResult res : results) {
 
 			String startTime = DateUtils.getMillisToTimeStamp(res.getStartMillis());
@@ -262,16 +270,17 @@ public class ListenerUtils {
 			String[] classNames = res.getTestClass().getName().split("\\.");
 			String className = classNames[classNames.length-1];
 			String methodName = res.getMethod().getMethodName();
-			String status = getStatus(res.getStatus());
-
+			//String status = getStatus(res.getStatus());
+			getStatus(res.getStatus());
+			
 			//coping test output in cells.
 			insertCell(table, Integer.toString(++cnt), Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
 			insertCell(table, methodName, Element.ALIGN_LEFT,1,cellFnt, "Background", statusColor);
-			insertCell(table, className, Element.ALIGN_LEFT,1,cellFnt, "Background", statusColor);
+			insertCell(table, className, Element.ALIGN_LEFT,2,cellFnt, "Background", statusColor);
 			insertCell(table, startTime, Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
 			insertCell(table, endTime, Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
 			insertCell(table, Long.toString(seconds), Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
-			insertCell(table, status, Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+			//insertCell(table, status, Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
 
 			//parameter
 			if(res.getParameters().length >0){
@@ -436,4 +445,188 @@ public class ListenerUtils {
 	private static BaseColor lightBlueColor() {
 		return new BaseColor(219, 225, 255);
 	}
+	
+	/******************************************************************************/
+	
+	public static void writePDFForRestReport(String fileName, Map<String, List<ITestResult>> testResults, ISuite suite) throws Exception {
+		ScriptLogger.info();
+		Document document = new Document();
+		try {
+			PdfWriter.getInstance(document, new FileOutputStream(new File(fileName)));
+			document.open();
+
+			document.add(setParagraph("Test Result\n\n", Element.ALIGN_CENTER));
+
+			//Layout 001 - Stats Layout.
+			document.add(setStatsLayout001(suite));
+			document.add(setParagraph("\n", Element.ALIGN_CENTER));
+
+			//Layout 001 - XML Parameters
+			document.add(setXMLParamsLayoutRestReport001(suite));
+			document.add(setParagraph("\n", Element.ALIGN_CENTER));
+
+			//Layout 001 - Step details Layout
+			for(Map.Entry<String, List<ITestResult>> entry : testResults.entrySet()){
+				document.add(setStepsDetailLayoutRestReport001(entry.getKey(),entry.getValue()));
+				document.add(setParagraph("\n", Element.ALIGN_CENTER));
+			}
+
+			//Layout 001 - Copy Suite.xml
+			document.add(pasteSuiteXMLdataLayout001((String)suite.getAttribute("suiteFileName")));
+			document.add(setParagraph("\n", Element.ALIGN_CENTER));
+
+		} catch (Exception e) {
+			throw new FrameworkException(e);
+		}
+		finally{
+			document.close();
+		}
+
+	}
+	
+	public static PdfPTable setXMLParamsLayoutRestReport001(ISuite suite) throws Exception{
+		//special font sizes
+		Font nameFnt = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD, new BaseColor(0, 0, 0)); 
+		Font headerFnt = new Font(FontFamily.TIMES_ROMAN, 8, Font.BOLD, new BaseColor(0, 0, 0));
+		Font cellFnt = new Font(FontFamily.TIMES_ROMAN, 8);
+
+		float[] columnWidths = {2.5f, 2.5f, 2.5f, 2.5f};
+		PdfPTable table = new PdfPTable(columnWidths);
+		table.setWidthPercentage(100f);
+
+		//Zero row
+		insertCell(table, "Global Parameter", Element.ALIGN_LEFT, 4, nameFnt, "Background", finalstatusColor);
+
+		//First row
+		insertCell(table, "Environment", Element.ALIGN_LEFT, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, suite.getParameter("env"), Element.ALIGN_CENTER, 1, cellFnt);
+		insertCell(table, "", Element.ALIGN_CENTER, 1, cellFnt);
+		insertCell(table, "", Element.ALIGN_CENTER, 1, cellFnt);
+		//Second row
+		insertCell(table, "WaitTime(Secs)", Element.ALIGN_LEFT, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, suite.getParameter("waitTime"), Element.ALIGN_CENTER, 1, cellFnt);
+
+		insertCell(table, "Stabitity Time(Secs)", Element.ALIGN_LEFT, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, suite.getParameter("stabilityTime"), Element.ALIGN_CENTER, 1, cellFnt);
+
+		insertCell(table, "Suite File", Element.ALIGN_LEFT, 1, headerFnt, "Background", lightBlueColor());
+		insertCell(table, (String)suite.getAttribute("suiteFileName"), Element.ALIGN_LEFT, 3, cellFnt); 
+		return table;
+	}
+	
+	public static PdfPTable setStepsDetailLayoutRestReport001(String testName, List<ITestResult> results) throws Exception{
+		int cnt =0;
+		//special font sizes
+		Font nameFnt = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD, new BaseColor(0, 0, 0)); 
+		Font headerFnt = new Font(FontFamily.TIMES_ROMAN, 8, Font.BOLD, new BaseColor(0, 0, 0));
+		Font cellFnt = new Font(FontFamily.TIMES_ROMAN, 8);
+
+		//specify column widths
+		float[] columnWidths = {.3f, 2.2f ,3.3f, 1f, 1f, 1f, .7f};
+
+		//create PDF table with the given widths
+		PdfPTable table = new PdfPTable(columnWidths);
+
+		// set table width a percentage of the page width
+		table.setWidthPercentage(100f);
+
+		//set testname, headers,
+		String testStatus = "";
+		for (ITestResult res : results) {
+			testStatus = getStatus(res.getStatus());
+			if(testStatus.equals("FAIL"))
+				break;
+		}
+		BaseColor finalTestStatusColor = testStatus.equals("PASS") ? lightGreenColor() : lightRedColor();
+		insertCell(table, testName, Element.ALIGN_LEFT, 7, nameFnt, "Background", finalTestStatusColor);
+		setHeaders(table, headerFnt, Element.ALIGN_CENTER, "No", "TestStep", "ClassName", "StartTime", "EndTime","Interval", "Status");
+
+		for (ITestResult res : results) {
+
+			String startTime = DateUtils.getMillisToTimeStamp(res.getStartMillis());
+			String endTime = DateUtils.getMillisToTimeStamp(res.getEndMillis());
+
+			long seconds = DateUtils.getDifferenceInDates(startTime, endTime);
+			String[] classNames = res.getTestClass().getName().split("\\.");
+			String className = classNames[classNames.length-1];
+			String methodName = res.getMethod().getMethodName();
+			String status = getStatus(res.getStatus());
+
+			//coping test output in cells.
+			insertCell(table, Integer.toString(++cnt), Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+			insertCell(table, methodName, Element.ALIGN_LEFT,1,cellFnt, "Background", statusColor);
+			insertCell(table, className, Element.ALIGN_LEFT,1,cellFnt, "Background", statusColor);
+			insertCell(table, startTime, Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+			insertCell(table, endTime, Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+			insertCell(table, Long.toString(seconds), Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+			insertCell(table, status, Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+
+			//parameter
+			if(res.getParameters().length >0){
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+				insertCell(table, "Parameters", Element.ALIGN_RIGHT,1,cellFnt, "Background", statusColor);
+				String params = "";
+				for(Object param : res.getParameters()){
+					params += param.toString()+", ";	
+				}
+				insertCell(table, params.substring(0, params.length() -2), Element.ALIGN_LEFT,5,cellFnt, "Background", statusColor);
+			}
+			//requestUrl
+			if(res.getAttribute("Request") !=null){
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+				insertCell(table, "Request", Element.ALIGN_RIGHT,1,cellFnt, "Background", statusColor);
+				insertCell(table, (String)res.getAttribute("Request"), Element.ALIGN_LEFT,5,cellFnt, "Background", statusColor);
+			}
+
+			//body
+			if((String)res.getAttribute("Body") != null){
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+				insertCell(table, "Body", Element.ALIGN_RIGHT,1,cellFnt, "Background", statusColor);
+				insertCell(table, (String)res.getAttribute("Body"), Element.ALIGN_LEFT,5,cellFnt, "Background", statusColor);
+			}
+			
+			//response
+			if((String)res.getAttribute("Response") != null){
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt, "Background", statusColor);
+				insertCell(table, "Response", Element.ALIGN_RIGHT,1,cellFnt, "Background", statusColor);
+				insertCell(table, (String)res.getAttribute("Response"), Element.ALIGN_LEFT,5,cellFnt, "Background", statusColor);
+			}
+			//responseString
+			if((String)res.getAttribute("Response String") != null){
+				String responseStr;
+				try {
+					responseStr = JSONUtils.prettyPrintJSON((String)res.getAttribute("Response String"));
+				} catch (Exception e) {
+					responseStr = (String)res.getAttribute("Response String");
+				}
+		
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt);
+				insertCell(table, "Response String", Element.ALIGN_RIGHT,1,cellFnt);
+				insertCell(table, responseStr, Element.ALIGN_LEFT,5,cellFnt);
+			}
+			//exception
+			if((String)res.getAttribute("exception") != null){
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt);
+				insertCell(table, "Exception", Element.ALIGN_RIGHT,1,cellFnt);
+				insertCell(table, (String)res.getAttribute("exception"), Element.ALIGN_LEFT,5,cellFnt);
+			}
+			//stack trace
+			if((StackTraceElement[])res.getAttribute("stacktrace") !=null){
+
+				StringBuffer buffer=new StringBuffer();
+				for (StackTraceElement ste : (StackTraceElement[])res.getAttribute("stacktrace")) {
+					buffer.append(ste.toString()+"\n");
+				}
+
+				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt);
+				insertCell(table, "Stacktrace", Element.ALIGN_RIGHT,1,cellFnt);
+				insertCell(table, buffer.toString(), Element.ALIGN_LEFT,5,cellFnt);
+			}
+
+
+		}
+		return table;
+	}
+
+
 }

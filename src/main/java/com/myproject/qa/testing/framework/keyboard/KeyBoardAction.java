@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import org.openqa.selenium.Keys;
 
 import com.myproject.qa.testing.framework.exceptions.FrameworkException;
-import com.myproject.qa.testing.framework.exceptions.ScriptException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 import com.myproject.qa.testing.framework.selenium.LocatorAccess;
 
