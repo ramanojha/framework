@@ -600,9 +600,16 @@ public class ListenerUtils {
 					responseStr = (String)res.getAttribute("Response String");
 				}
 		
-				insertCell(table, "", Element.ALIGN_CENTER,1,cellFnt);
-				insertCell(table, "Response String", Element.ALIGN_RIGHT,1,cellFnt);
-				insertCell(table, responseStr, Element.ALIGN_LEFT,5,cellFnt);
+				if (status.equals("PASS")) {
+					insertCell(table, "", Element.ALIGN_CENTER, 1, cellFnt);
+					insertCell(table, "Response String", Element.ALIGN_RIGHT,1, cellFnt, "Background", statusColor);
+					insertCell(table, responseStr, Element.ALIGN_LEFT, 5, cellFnt, "Background", statusColor);
+				}else{
+					insertCell(table, "", Element.ALIGN_CENTER, 1, cellFnt);
+					insertCell(table, "Response String", Element.ALIGN_RIGHT,1, cellFnt);
+					insertCell(table, responseStr, Element.ALIGN_LEFT, 5, cellFnt);
+
+				}
 			}
 			//exception
 			if((String)res.getAttribute("exception") != null){
