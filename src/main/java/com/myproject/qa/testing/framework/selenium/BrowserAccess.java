@@ -20,6 +20,11 @@ public class BrowserAccess extends InstanceAccess{
 		 return LocatorAccess.getElement(locator).getAttribute(attribute);
 	}
 	
+	//get page text
+	public static String getPageInnerText(){
+		return jsDriver.executeScript("return document.documentElement.innerText;").toString();
+	}
+
 	public static String getElementText(Object locator, boolean... js)  throws Exception {
 		if(js.length > 0) {	// default is JavaScript
 			if(browser.equalsIgnoreCase("ie"))
@@ -85,7 +90,7 @@ public class BrowserAccess extends InstanceAccess{
 		String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
 		return jsDriver.executeScript(scriptToExecute).toString();	
 	}
-
+	//https://www.rapidtables.com/convert/color/hex-to-rgb.html
 	public static String getCssValue(WebElement object, String cssAttribute) throws Exception {
 		return LocatorAccess.getElement(object).getCssValue(cssAttribute);
 	}
@@ -105,5 +110,14 @@ public class BrowserAccess extends InstanceAccess{
 			}
 		});	
 		return finalList;	
+	}
+	// get domain
+	public String getDomain(Object element, String value){
+		return jsDriver.executeScript("return document.domain;").toString();
+	}
+
+	// get url
+	public String getURL(Object element, String value){
+		return jsDriver.executeScript("return document.URL;").toString();
 	}
 }

@@ -473,27 +473,6 @@ public class BrowserAction extends InstanceAccess{
 		actions.build().perform();	
 	}
 
-	//Drag and drop
-	public static void dragNdrop(Object source, Object target) throws Exception {
-		Actions actions= new Actions(driver);
-		actions.dragAndDrop(LocatorAccess.getElement(source), LocatorAccess.getElement(target)).perform();	
-	}
-
-	//drag and drop
-	public static void dragNdropWithMultipleActions(Object source, Object target) throws Exception {
-		Actions actions= new Actions(driver);
-		actions.clickAndHold(LocatorAccess.getElement(source))
-		.moveToElement(LocatorAccess.getElement(target))
-		.release(LocatorAccess.getElement(source)).build().perform();
-	}
-
-	//drag and drop
-	public static void dragNdrop(Object source, Object target, int xOffset, int yOffset) throws Exception {
-		Actions actions= new Actions(driver);
-		actions.clickAndHold(LocatorAccess.getElement(source))
-		.dragAndDropBy(LocatorAccess.getElement(source), xOffset, yOffset).perform();
-	}
-
 	//resize window
 	//slider
 	public static void resizeWindowByOffset(Object target, int xOffset, int yOffset) throws Exception {
@@ -583,10 +562,7 @@ public class BrowserAction extends InstanceAccess{
 	}
 	
 	//to get color of the Object
-	//https://www.rapidtables.com/convert/color/hex-to-rgb.html
-	public static String getCssValue(Object element, String cssAttribute) throws Exception {
-		return LocatorAccess.getElement(element).getCssValue(cssAttribute);
-	}
+	
 	
 	
 	//change color and hold for 20 milli seconds.
@@ -621,11 +597,6 @@ public class BrowserAction extends InstanceAccess{
 	//get Title
 	public static String getTitleByJS(){
 		return jsDriver.executeScript("return document.title;").toString();
-	}
-
-	//get page text
-	public static String getPageInnerText(){
-		return jsDriver.executeScript("return document.documentElement.innerText;").toString();
 	}
 
 	// scroll down page till last point
@@ -668,26 +639,6 @@ public class BrowserAction extends InstanceAccess{
 	//navigate to different webpage	
 	public static void getURL(String url) throws InterruptedException{
 		jsDriver.executeScript("window.location = \'"+url+"\'");
-	}
-
-	//get innerHTML of the page
-	public static String getInnerHTML(){
-		return jsDriver.executeScript("return document.documentElement.innerHTML;").toString();
-		
-	}
-
-	// get domain
-	public String getDomain(Object element, String value){
-		return jsDriver.executeScript("return document.domain;").toString();
-
-
-	}
-
-	// get url
-	public String getURL(Object element, String value){
-		return jsDriver.executeScript("return document.URL;").toString();
-		
-
 	}
 
 	//handle checkbox
