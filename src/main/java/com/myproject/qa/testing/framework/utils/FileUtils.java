@@ -23,7 +23,8 @@ import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
 public class FileUtils {
-	
+	//Refer - https://www.happycoders.eu/java/how-to-write-files-quickly-and-easily/
+	//Refer - https://www.happycoders.eu/java/how-to-read-files-easily-and-fast/
 	public static String convertStreamToString(InputStream is) throws Exception {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));

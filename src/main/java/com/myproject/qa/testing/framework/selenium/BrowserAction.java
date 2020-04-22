@@ -35,7 +35,7 @@ public class BrowserAction extends InstanceAccess{
 	public static final String CTRL_A_DEL_TAB = "CtrlADelTab";
 	public static final String KEYS = "SendKeys";
 	public static final String CTRL_A_KEYS = "CtrAKeys";
-
+	public static final String DRAG_N_DROP_CLICK_N_HOLD = "clickAndHold";
 	public static String parentWindowHandler = null;
 	public static String TERMINAL_TYPE = "CMD";
 
@@ -279,11 +279,16 @@ public class BrowserAction extends InstanceAccess{
 		actions.contextClick(LocatorAccess.getElement(el)).build().perform();
 	}
 
-	public static void dragAndDrop(Object source, Object target) throws Exception {
+	public static void dragAndDrop(Object source, Object target, String... style) throws Exception {
 		Actions builder = new Actions(driver);
-		builder.clickAndHold(LocatorAccess.getElement(source))
-		.moveToElement(LocatorAccess.getElement(target))
-		.release(LocatorAccess.getElement(target)).build().perform();
+		if (style.equals(DRAG_N_DROP_CLICK_N_HOLD)) {
+			builder.clickAndHold(LocatorAccess.getElement(source))
+					.moveToElement(LocatorAccess.getElement(target))
+					.release(LocatorAccess.getElement(target)).build()
+					.perform();
+		}else{
+			builder.dragAndDrop(LocatorAccess.getElement(source), LocatorAccess.getElement(target)).build().perform();
+		}
 	}
 
 	public static void dragAndDrop( Object source,  int xOffset,  int yOffset)
