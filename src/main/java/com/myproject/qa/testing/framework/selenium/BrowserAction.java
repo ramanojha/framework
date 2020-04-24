@@ -701,4 +701,9 @@ public class BrowserAction extends InstanceAccess{
 	public static void inputDateInField(Object element, String formatedDate) throws Exception {
 		jsDriver.executeScript("arguements[0].setAttribute('"+formatedDate+"')", LocatorAccess.getElement(element));
 	}
+	
+	public static void hoverAndClickElement(Object hoverElement, Object clickableLocator, String...style) throws Exception{
+		hoverOverElement(hoverElement);
+		click(clickableLocator, style);
+	}
 }

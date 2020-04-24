@@ -206,6 +206,11 @@ public class BrowserWait extends InstanceAccess{
 		});
 	}
 
-
+	public static void hoverAndVerifyElements(Object hover, Object... elements ) throws Exception {
+		BrowserAction.hoverOverElement(hover);
+		for (Object locator : elements) {
+			BrowserWait.waitUntilElementIsDisplayed(LocatorAccess.getElement(locator), waitTime);
+		}
+	}
 
 }
