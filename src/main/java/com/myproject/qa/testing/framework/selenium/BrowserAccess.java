@@ -120,4 +120,9 @@ public class BrowserAccess extends InstanceAccess{
 	public String getURL(Object element, String value){
 		return jsDriver.executeScript("return document.URL;").toString();
 	}
+	
+	// get url
+	public int getTotalFramesOnPage(Object element, String value){
+		return Integer.parseInt(jsDriver.executeScript("return window.length").toString());
+	}
 }
