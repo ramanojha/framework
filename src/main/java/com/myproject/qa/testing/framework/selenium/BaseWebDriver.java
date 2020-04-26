@@ -37,7 +37,7 @@ public class BaseWebDriver {
 	
 	
 	public static int getWaitTime() {
-		return waitTime*1000;
+		return waitTime*10;
 	}
 
 
