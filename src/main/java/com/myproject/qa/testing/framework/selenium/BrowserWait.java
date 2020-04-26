@@ -101,7 +101,7 @@ public class BrowserWait extends InstanceAccess{
 		(new WebDriverWait(driver, time)).until(new ExpectedCondition<Boolean>() {
 			public Boolean apply(WebDriver d) {
 				try {	
-					return Boolean.valueOf(d.getTitle().trim().equals(title)); 
+					return Boolean.valueOf(d.getTitle().trim().contains(title)); 
 				}
 				catch(Exception e) { 
 					return Boolean.valueOf(false); 

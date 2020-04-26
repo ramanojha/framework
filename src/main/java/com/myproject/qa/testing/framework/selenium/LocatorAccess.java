@@ -59,4 +59,68 @@ public class LocatorAccess extends InstanceAccess{
 		}
 		return null;
 	}
+	
+	public static List<WebElement> getElementsContains(String tag, String value) throws Exception{
+		String xpath = "//"+tag+"[contains(.,'"+value+"')]";
+		try {
+			return driver.findElements(By.xpath(xpath));
+		} catch (Exception e) {
+			throw new LocatorNotResolvedException(e, "Locator not Found using xpath"+xpath);
+		}
+	}
+	
+	public static WebElement getElementContains(String tag, String value) throws Exception{
+		String xpath ="//"+tag+"[contains(.,'"+value+"')]";
+		try {
+			return driver.findElement(By.xpath(xpath));
+		} catch (Exception e) {
+			throw new LocatorNotResolvedException(e, "Locator not Found using xpath"+xpath);
+		}
+	}
+	
+	public static List<WebElement> getElements(String tag, String value) throws Exception{
+		String xpath = "//"+tag+"[.='"+value+"']";
+		try {
+			return driver.findElements(By.xpath(xpath));
+		} catch (Exception e) {
+			throw new LocatorNotResolvedException(e, "Locator not Found using xpath"+xpath);
+		}
+	}
+	
+	public static WebElement getElement(String tag, String value) throws Exception{
+		String xpath = "//"+tag+"[.='"+value+"']";
+		try {
+			return driver.findElement(By.xpath("//"+tag+"[.='"+value+"']"));
+		} catch (Exception e) {
+			throw new LocatorNotResolvedException(e, "Locator not Found using xpath"+xpath);
+		}
+	}
+	
+	public static WebElement getElementFromListWhichHas(Object locator, String value) throws Exception{
+		return getElementFromListWhichHas(LocatorAccess.getElements(locator), value);
+	}
+	
+	public static WebElement getElementFromListWhichHas(List<WebElement> list, String value) throws Exception {
+		for(WebElement e : list){
+			if(e.getText().equals(value)){
+				return e;
+			}		
+		}
+		throw new LocatorNotResolvedException("No WebElement equaly Matched In List which has "+value);
+		
+	}
+	
+	public static WebElement getElementFromListWhichContains(Object locator, String value) throws Exception{
+		return getElementFromListWhichHas(LocatorAccess.getElements(locator), value);
+	}
+	
+	public static WebElement getElementFromListWhichContains(List<WebElement> list, String value) throws Exception {
+		for(WebElement e : list){
+			if(e.getText().contains(value)){
+				return e;
+			}		
+		}
+		throw new LocatorNotResolvedException("No WebElement matched In List which has "+value);
+
+	}
 }

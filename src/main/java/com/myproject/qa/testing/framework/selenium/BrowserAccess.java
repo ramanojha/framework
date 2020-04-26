@@ -125,4 +125,6 @@ public class BrowserAccess extends InstanceAccess{
 	public int getTotalFramesOnPage(Object element, String value){
 		return Integer.parseInt(jsDriver.executeScript("return window.length").toString());
 	}
+	
+	
 }

@@ -706,4 +706,21 @@ public class BrowserAction extends InstanceAccess{
 		hoverOverElement(hoverElement);
 		click(clickableLocator, style);
 	}
+	
+	public static void clickElementFromListWhichHas(Object locator, String value, String... style) throws Exception{
+		click(LocatorAccess.getElementFromListWhichHas(LocatorAccess.getElements(locator), value), style);
+	}
+	
+	public static void clickElementFromListWhichHas(List<WebElement> list, String value, String... style) throws Exception {
+		click(LocatorAccess.getElementFromListWhichHas(list, value), style);
+	}
+	
+	public static void clickElementFromListWhichContains(Object locator, String value, String... style) throws Exception{
+		click(LocatorAccess.getElementFromListWhichContains(LocatorAccess.getElements(locator), value), style);
+	}
+	
+	public static void getElementFromListWhichContains(List<WebElement> list, String value, String...style) throws Exception {
+		click(LocatorAccess.getElementFromListWhichContains(list, value), style);
+	}
+	
 }
