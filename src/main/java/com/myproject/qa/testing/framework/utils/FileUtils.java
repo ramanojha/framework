@@ -93,11 +93,8 @@ public class FileUtils {
 	//Read a filename
 	//Using FileInputStreem instead of FileReader in file have weird characters
 	public static InputStream readFileAsItIs(String fileName) throws IOException {
-		int i =0;
+	
 		FileInputStream inputStream = new FileInputStream(fileName);
-		while((i = inputStream.read()) != -1) {
-			//System.out.print((char)i);
-		}   
 		return inputStream;        
 
 	}
