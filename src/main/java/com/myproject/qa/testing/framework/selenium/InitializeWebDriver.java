@@ -23,6 +23,7 @@ public class InitializeWebDriver {
 		if(driver == null){
 			switch (browser) {
 			case "chrome" :
+				System.setProperty(ChromeDriverService.CHROME_DRIVER_SILENT_OUTPUT_PROPERTY, "true");
 				WebDriverManager.chromedriver().setup();
 				
 				ChromeOptions options = new ChromeOptions();
