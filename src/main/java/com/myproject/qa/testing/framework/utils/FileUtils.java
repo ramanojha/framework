@@ -29,7 +29,7 @@ public class FileUtils {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder sb = new StringBuilder();
-
+		
 		String line = null;
 		try {
 			while ((line = reader.readLine()) != null) {
@@ -90,15 +90,6 @@ public class FileUtils {
 		return bufferedReader(br);
 	}
 
-	//Read a filename
-	//Using FileInputStreem instead of FileReader in file have weird characters
-	public static InputStream readFileAsItIs(String fileName) throws IOException {
-	
-		FileInputStream inputStream = new FileInputStream(fileName);
-		return inputStream;        
-
-	}
-	
 	//Read a excel and return workbook
 	public static XSSFWorkbook readExcel(String fileName) throws IOException {
 		FileInputStream inputStream = new FileInputStream(new File(fileName));
@@ -108,16 +99,10 @@ public class FileUtils {
 
 	//Write a File(read character by character)
 	public static void writeFile(String fileName, String str) throws IOException {
-	
-		BufferedWriter bufferedWriter = null;
-		try {
-			bufferedWriter = new BufferedWriter(new FileWriter(new File(fileName)));
+		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(fileName)))){
 			bufferedWriter.write(str);
 		} catch (Exception e) {
 			throw new FrameworkException(e, "Unable to write file at "+fileName);
-		}
-		finally{
-			bufferedWriter.close();
 		}
 	}
 
@@ -144,9 +129,11 @@ public class FileUtils {
 
 	//Write Excel
 	public static void writeExcel(String filename, XSSFWorkbook workbook) throws IOException {
-		FileOutputStream stream = new FileOutputStream(new File(filename));
-		workbook.write(stream);
-		workbook.close();
+		try ( FileOutputStream stream = new FileOutputStream(new File(filename));){
+			workbook.write(stream);	
+		} catch (Exception e) {
+			throw new FrameworkException(e, filename+" can't be written");
+		}
 	}
 	
 	//List of fileNames in a folder
@@ -163,12 +150,16 @@ public class FileUtils {
 	}
 
 	//PropertyFile
-	public static Properties propertyFile(String fileName) throws IOException {
-		
-		Properties prop = new Properties();
-		InputStream inStream = new FileInputStream(fileName);
-		prop.load(inStream);
-		return prop;
+	public static Properties propertyFile(String fileName) throws Exception {
+	
+		try (InputStream inStream = new FileInputStream(fileName);){
+			Properties prop = new Properties();
+			prop.load(inStream);
+			return prop;
+		}
+		catch (Exception e) {
+			throw new FrameworkException(e, fileName+" can't be loaded");
+		}
 	}
 
 	//Read InputStream
@@ -179,20 +170,25 @@ public class FileUtils {
 	
 	public static String readInputStreaminKB(InputStream inputStream) throws IOException {
 		
-		byte[] bytes=new byte[1024];
-		int i;
-		String output = "";
-		while((i =inputStream.read(bytes, 0, 1024)) != -1) {
-			output +=  new String(bytes, 0, i);
+		try {
+			byte[] bytes=new byte[1024];
+			int i;
+			String output = "";
+			while((i =inputStream.read(bytes, 0, 1024)) != -1) {
+				output +=  new String(bytes, 0, i);
+			}
+			inputStream.close();
+			return output;
+		} catch (Exception e) {
+			throw new FrameworkException(e, "Unable to read Input streem and store");
 		}
-		return output;
 	}
 	
 	//Read Buffer and doesn't append new line.
 	public static String  bufferedReader(BufferedReader bufferedReader) throws IOException {
-	
-		String line = bufferedReader.readLine();
 		StringBuffer sb = new StringBuffer();
+		
+		String line = bufferedReader.readLine();
 		while(line != null) {
 			sb.append(line);
 			line = bufferedReader.readLine();
