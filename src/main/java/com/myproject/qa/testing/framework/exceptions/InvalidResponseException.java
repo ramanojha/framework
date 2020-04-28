@@ -7,12 +7,13 @@ public class InvalidResponseException extends Exception{
 
 	private static final long serialVersionUID = 1L;
 	
-	@Aim("To throw an Invalid Request Exception when a invalid request is sent")
+	@Aim("To throw an Invalid Response Exception when a invalid response is sent")
 	public InvalidResponseException(String s){
 		super(s);
 		ScriptLogger.error(s);
 	}
 	
+	@Aim("To throw an Invalid Response Exception when a invalid response is sent")
 	public InvalidResponseException(Exception e,String message){
 		super(message);
 		ScriptLogger.error(e, message);
