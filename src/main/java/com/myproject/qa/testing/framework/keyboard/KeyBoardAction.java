@@ -5,11 +5,13 @@ import java.awt.event.KeyEvent;
 
 import org.openqa.selenium.Keys;
 
+import com.myproject.qa.testing.framework.annotations.Aim;
 import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 import com.myproject.qa.testing.framework.selenium.LocatorAccess;
 
 public class KeyBoardAction {
+	@Aim("Open New tab by pressing 'ctrl + t'")
 	public static void openNewTabUsingKeyBoard() throws Exception {
 		try {
 			Robot robot = new Robot();
@@ -24,10 +26,12 @@ public class KeyBoardAction {
 		}
 	}
 	
+	@Aim("Press the 'Tab' Key")
 	public static void presTabKey(Object locator) throws Exception {
 		LocatorAccess.getElement(locator).sendKeys(Keys.TAB);
 	}
 	
+	@Aim("Press 'ESC' key")
 	public static void pressESCTest() throws Exception {
 		ScriptLogger.info();
 		try {
@@ -41,7 +45,7 @@ public class KeyBoardAction {
 			throw new FrameworkException(e);
 		}
 	}
-
+	@Aim("To press 'alt + F4'")
 	public static void pressAltF4Test() throws Exception {
 		ScriptLogger.info();
 		try {
@@ -58,6 +62,7 @@ public class KeyBoardAction {
 		}
 	}
 	
+	@Aim("To do tab out by pressing tab key")
 	public static void tabOut() throws Exception {
 		ScriptLogger.info();
 		
