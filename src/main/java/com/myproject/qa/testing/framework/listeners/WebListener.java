@@ -15,9 +15,9 @@ import org.testng.ITestResult;
 
 import com.myproject.qa.testing.framework.annotations.Aim;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
-import com.myproject.qa.testing.framework.report.Reporter;
 import com.myproject.qa.testing.framework.selenium.BrowserAccess;
 import com.myproject.qa.testing.framework.selenium.BrowserWait;
+import com.myproject.qa.testing.framework.utils.FileUtils;
 import com.myproject.qa.testing.framework.utils.ListenerUtils;
 
 public class WebListener implements ITestListener, ISuiteListener{
@@ -38,16 +38,17 @@ public class WebListener implements ITestListener, ISuiteListener{
 	@Override
 	@Aim("On Suite Finish, PDF Report is created")
 	public void onFinish(ISuite suite) {
+		
 		suite.setAttribute("suiteFileName", suiteFileName);
 		suite.setAttribute("endTime", System.currentTimeMillis());
 		try {
-			createPDFArtifact(Reporter.reportName, testResults, suite);
+			createPDFArtifact(FileUtils.getPdfArtifactName(ListenerUtils.getReportName(suiteFileName)), testResults, suite);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 	}
-	
+
 	@Override
 	@Aim("On test finish, adds test name and its results in testResults")
 	public void onFinish(ITestContext result){
@@ -59,6 +60,7 @@ public class WebListener implements ITestListener, ISuiteListener{
 	public void onStart(ITestContext result) {
 		results = new ArrayList<ITestResult>();
 		suiteFileName = result.getCurrentXmlTest().getSuite().getFileName();
+
 	}
 
 	@Override

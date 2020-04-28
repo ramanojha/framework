@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParseException;
+import com.myproject.qa.testing.framework.annotations.Aim;
 import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
@@ -208,6 +209,29 @@ public class FileUtils {
 		} 
 		bufferedReader.close(); 
 		return sb.toString();
+	}
+	
+	@Aim("To create a directory if not exist.")
+	public static void createDirectoryIfNotExist(String directoryPath) {
+		File file = new File(directoryPath);
+		if(file.isDirectory()){
+			System.out.println(true);
+		}else{
+			file.mkdirs();
+		}
+	}
+	
+	@Aim("To get the PDF ArtifactName")
+	public static String getPdfArtifactName(String fileName) {
+		String directoryPath = fileName.substring(0, fileName.lastIndexOf('\\'));
+		createDirectoryIfNotExist(directoryPath);
+		String reportName = fileName
+				.substring(fileName.lastIndexOf('\\')+1, fileName.length())
+				.split("\\.")[0]
+				.toUpperCase()+".pdf";
+				
+				
+		return directoryPath+"\\"+reportName;
 	}
 }
 

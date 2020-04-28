@@ -14,8 +14,8 @@ import org.testng.ITestResult;
 import com.myproject.qa.testing.framework.annotations.Aim;
 import com.myproject.qa.testing.framework.logs.ReportLogger;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
-import com.myproject.qa.testing.framework.report.Reporter;
 import com.myproject.qa.testing.framework.test.env.TestEnvironment;
+import com.myproject.qa.testing.framework.utils.FileUtils;
 import com.myproject.qa.testing.framework.utils.ListenerUtils;
 
 public class RestListener implements ITestListener, ISuiteListener{
@@ -40,8 +40,7 @@ public class RestListener implements ITestListener, ISuiteListener{
 		suite.setAttribute("suiteFileName", suiteFileName);
 		suite.setAttribute("endTime", System.currentTimeMillis());
 		try {
-			Reporter.setReportName((String)suite.getParameter("reportName"));
-			createPDFArtifactForRestAPI(Reporter.reportName, testResults, suite);
+			createPDFArtifactForRestAPI(FileUtils.getPdfArtifactName(ListenerUtils.getReportName(suiteFileName)), testResults, suite);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

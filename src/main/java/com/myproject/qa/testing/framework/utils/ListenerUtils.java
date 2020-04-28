@@ -23,6 +23,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.myproject.qa.testing.framework.annotations.Aim;
 import com.myproject.qa.testing.framework.exceptions.FrameworkException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
@@ -635,5 +636,10 @@ public class ListenerUtils {
 		return table;
 	}
 
-
+	@Aim("To create report name based on Test Suite directory")
+	public static String getReportName(String suiteFileName) {
+		return suiteFileName
+				.replace(System.getProperty("user.dir"), System.getProperty("user.dir")+"\\target")
+				.replace(".xml", ".pdf");
+	}
 }
