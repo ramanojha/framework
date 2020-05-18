@@ -27,3 +27,14 @@ This project will have package for
 	Basic flow							- *.flows
 	Actions and Verification of pages 	- *.pages
 	
+	
+	
+So heirarchy is like
+
+			         |----> Sanity
+			         |----> BddSanity
+Framework  ----> my-project ---->|----> Regression
+			         |----> API
+			         |----> Data Driven
+			    
+	
