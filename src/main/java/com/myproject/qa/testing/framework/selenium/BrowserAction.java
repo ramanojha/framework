@@ -20,7 +20,9 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.support.ui.Select;
 
+import com.myproject.qa.testing.framework.annotations.Aim;
 import com.myproject.qa.testing.framework.exceptions.ScriptException;
+import com.myproject.qa.testing.framework.keyboard.KeyBoardAction;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 import com.myproject.qa.testing.framework.properties.SeleniumProperties;
 import com.myproject.qa.testing.framework.utils.ShellUtils;
@@ -723,4 +725,11 @@ public class BrowserAction extends InstanceAccess{
 		click(LocatorAccess.getElementFromListWhichContains(list, value), style);
 	}
 	
+	@Aim("Hit Allow on multiple File Download pop up")
+	public static void allowMultipleFileDownload() throws Exception{
+		KeyBoardAction.tabOut(); Thread.sleep(2000);
+		KeyBoardAction.tabOut(); Thread.sleep(2000);
+		KeyBoardAction.tabOut(); Thread.sleep(2000);
+		KeyBoardAction.pressEnterKey();
+	}
 }

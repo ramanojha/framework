@@ -75,4 +75,19 @@ public class KeyBoardAction {
 		}
 		
 	}
+	
+	@Aim("To do tab out by pressing Enter key")
+	public static void pressEnterKey() throws Exception {
+		ScriptLogger.info();
+		
+		try {
+			Robot robot=new Robot();
+			robot.keyPress(KeyEvent.VK_ENTER);
+			robot.keyRelease(KeyEvent.VK_ENTER);	
+		} catch (Exception e) {
+			throw new FrameworkException(e);
+		}
+		
+	}
 }
+
