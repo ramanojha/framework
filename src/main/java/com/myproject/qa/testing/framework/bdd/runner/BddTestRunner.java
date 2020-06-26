@@ -2,7 +2,6 @@ package com.myproject.qa.testing.framework.bdd.runner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import cucumber.api.CucumberOptions;
@@ -18,7 +17,12 @@ import cucumber.api.testng.TestNGCucumberRunner;
 						  },
 				monochrome = true, 
 				strict = true,
-				dryRun = false)
+				dryRun = false,
+				tags = "~@Smoke"
+				)
+//tags = {"@Smoke", "@Regression"} // AND Condition
+//tags = {"@Smoke, @Regression"}   // OR Condition
+//tags = {"~@Smoke, @Regression"}  // OR Condition where @Smoke will be ignored
 
 public class BddTestRunner {
 	
