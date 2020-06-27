@@ -1,5 +1,10 @@
 package com.myproject.qa.testing.framework.bdd.runner;
 
+import io.cucumber.testng.CucumberFeatureWrapper;
+import io.cucumber.testng.CucumberOptions;
+import io.cucumber.testng.PickleEventWrapper;
+import io.cucumber.testng.TestNGCucumberRunner;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,11 +14,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
-import cucumber.api.CucumberOptions;
-import cucumber.api.testng.CucumberFeatureWrapper;
-import cucumber.api.testng.TestNGCucumberRunner;
-
 
 @CucumberOptions(features = "Features", 
 				 glue = { "com/myproject/qa/sanity/bdd/stepdefs/" }, 
@@ -25,34 +25,33 @@ import cucumber.api.testng.TestNGCucumberRunner;
 				strict = true,
 				dryRun = false)
 
-public class BddTestFlowRunner {
-
-	private TestNGCucumberRunner testNGCucumberRunner;
-	private static List<String> featureFilesList;
-
-	@SuppressWarnings("unchecked")
-	@BeforeClass(alwaysRun = true)
+public class BddTestFlowRunner{
+    private TestNGCucumberRunner testNGCucumberRunner;
+    private static List<String> featureFilesList;
+    
+    @BeforeClass(alwaysRun = true)
 	@Parameters("featureFiles")
-	public void setUpClass(String featureFiles) {
-		featureFilesList = new ArrayList<String>(Arrays.asList(featureFiles.split("\\|")));
-		testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
-		
-	}
+    public void setUpClass(String featureFiles) {
+    	featureFilesList = new ArrayList<String>(Arrays.asList(featureFiles.split("\\|")));
+        testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
+    }
 
-	@Test(groups = "cucumber", description = "Runs cucmber Features", dataProvider = "features")
-	public void feature(CucumberFeatureWrapper cucumberFeature) {
-		if(featureFilesList.contains(cucumberFeature.getCucumberFeature().getPath()))
-			testNGCucumberRunner.runCucumber(cucumberFeature.getCucumberFeature());
-	}
+ 
+    @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
+    public void runScenario(PickleEventWrapper pickleWrapper, CucumberFeatureWrapper featureWrapper) throws Throwable {
+    	String[] files = pickleWrapper.getPickleEvent().uri.split("/");
+    	if(featureFilesList.contains(files[files.length-1]))
+    		testNGCucumberRunner.runScenario(pickleWrapper.getPickleEvent());
+    }
+   
+    @DataProvider
+    public Object[][] scenarios() {
+        return testNGCucumberRunner.provideScenarios();
+    }
 
-	@DataProvider
-	public Object[][] features() {
-		return testNGCucumberRunner.provideFeatures();
-	}
-
-	@AfterClass(alwaysRun = true)
-	public void testDownClass() {
-		testNGCucumberRunner.finish();
-	}
-
+    @AfterClass(alwaysRun = true)
+    public void tearDownClass() {
+        testNGCucumberRunner.finish();
+    }
+   
 }
