@@ -1,8 +1,7 @@
 package com.myproject.qa.testing.framework.utils;
-import groovy.util.ScriptException;
-
 import java.util.Scanner;
 
+import com.myproject.qa.testing.framework.exceptions.ScriptException;
 import com.myproject.qa.testing.framework.logs.ScriptLogger;
 
 public class UserInputs {
